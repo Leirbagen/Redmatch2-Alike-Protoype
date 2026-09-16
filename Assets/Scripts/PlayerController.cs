@@ -9,7 +9,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float velocity = 5;
     [SerializeField] private float forceJump = 5;
     [SerializeField] private bool isJumping = false;
-    [SerializeField] private GrapplingController grappling;
+    [SerializeField] private GrapplingController leftGrapple;
+    [SerializeField] private GrapplingController rightGrapple;
     private bool isGrappling = false;
     private InputController input;
 
@@ -40,21 +41,22 @@ public class PlayerController : MonoBehaviour
 
         if (input.GetButtonDown(InputController.Input.JUMP))
         {
+            leftGrapple.StopGrapple();
+            rightGrapple.StopGrapple();
             if (isJumping == false)
             {
                 Jump();
                 isJumping = true;
             }
-            else if (isJumping == true && isGrappling == false)
-            {
-                grappling.StartGrapple();
-                isGrappling = true;
-            }
-            else if (isGrappling == true)
-            {
-                grappling.StopGrapple();
-                isGrappling = false;
-            }
+        }
+
+        if (input.GetButtonDown(InputController.Input.GRAPPLE_LEFT)) 
+        {
+            leftGrapple.StartGrapple();
+        }
+        if (input.GetButtonDown(InputController.Input.GRAPPLE_RIGHT))
+        {
+            rightGrapple.StartGrapple();
         }
     }
 

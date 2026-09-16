@@ -10,22 +10,22 @@ public class GrapplingController : MonoBehaviour
     public Transform ropeOut;
     public float maxDistance = 100f;
     public LayerMask grappleableLayer;
+    public GameObject playerBody;
 
     private void Awake()
     {
         lineRenderer = GetComponent<LineRenderer>();
     }
-
     public void StartGrapple()
     {
         RaycastHit hit;
         if (Physics.Raycast(cameraLook.position, cameraLook.forward, out hit, maxDistance, grappleableLayer))
         {
             grapplePoint = hit.point;
-            joint = gameObject.AddComponent<SpringJoint>();
+            joint = playerBody.AddComponent<SpringJoint>();
             joint.autoConfigureConnectedAnchor = false;
             joint.connectedAnchor = grapplePoint;
-            float distanceFromPoint = Vector3.Distance(transform.position, grapplePoint);
+            float distanceFromPoint = Vector3.Distance(playerBody.transform.position, grapplePoint);
             joint.maxDistance = distanceFromPoint * 0.5f; 
             joint.minDistance = distanceFromPoint * 0.1f;
             joint.spring = 15f;
@@ -42,12 +42,10 @@ public class GrapplingController : MonoBehaviour
             Destroy(joint);
         }
     }
-
     private void LateUpdate()
     {
         DrawRope();
     }
-
     private void DrawRope()
     {
         if (!joint) return;

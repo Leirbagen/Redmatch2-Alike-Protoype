@@ -36,5 +36,7 @@ public class InputController : MonoBehaviour
         public const int JUMP = 2;
         public const int MOUSE_X = 3;
         public const int MOUSE_Y = 4;
+        public const int GRAPPLE_LEFT = 8;
+        public const int GRAPPLE_RIGHT = 9;
     }
 }
