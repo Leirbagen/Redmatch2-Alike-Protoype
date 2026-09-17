@@ -38,5 +38,7 @@ public class InputController : MonoBehaviour
         public const int MOUSE_Y = 4;
         public const int GRAPPLE_LEFT = 8;
         public const int GRAPPLE_RIGHT = 9;
+        public const int FIRE_1 = 10;
+        public const int RELOAD_WEAPON = 11;
     }
 }

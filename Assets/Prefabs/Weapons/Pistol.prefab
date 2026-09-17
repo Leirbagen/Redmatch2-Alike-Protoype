@@ -53,15 +53,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0844e374bd75f2c4199d99761d9be4ea, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 9.932086
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0844e374bd75f2c4199d99761d9be4ea, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.15332446
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0844e374bd75f2c4199d99761d9be4ea, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -4.1847525
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0844e374bd75f2c4199d99761d9be4ea, type: 3}
       propertyPath: m_LocalRotation.w
@@ -127,6 +127,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79cc2f908a718094bb2ecbb5a3e8ad11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weaponNozzle: {fileID: 5968365681570312229}
+  hitLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  fireRange: 200
+  backForce: 4
+  bulletHole: {fileID: 5288464404529657000, guid: 952039bddcdc7334fab29df0f1d73473, type: 3}
+  flashEffect: {fileID: 9113582395060495145, guid: e265f8f763b9dd94d8d78df3e18fc24c, type: 3}
 --- !u!4 &7588268036309314057 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0844e374bd75f2c4199d99761d9be4ea, type: 3}

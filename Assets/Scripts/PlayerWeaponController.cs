@@ -18,6 +18,8 @@ public class PlayerWeaponController : MonoBehaviour
         {
             AddWeapon(startingWeapon);
         }
+
+        SwitchWeapon();
     }
 
     private void AddWeapon(WeaponController p_weaponPrefab) 
@@ -35,19 +37,29 @@ public class PlayerWeaponController : MonoBehaviour
             }
         }
     }
-    private void SwitchWeapon(int p_weaponIndex) 
+    private void SwitchWeapon() 
     {
-        if (p_weaponIndex != activeWeaponIndex && p_weaponIndex >= 0) 
+        int tempIndex = (activeWeaponIndex + 1) % weaponSlots.Length;
+        if (weaponSlots[tempIndex] == null) 
         {
-            weaponSlots[p_weaponIndex].gameObject.SetActive(true);
-            activeWeaponIndex = p_weaponIndex;
+            return;
         }
+
+        foreach (WeaponController weapon in weaponSlots) 
+        {
+            if (weapon != null) 
+            {
+                weapon.gameObject.SetActive(false);
+            }
+        }
+        weaponSlots[tempIndex].gameObject.SetActive(true);
+        activeWeaponIndex = tempIndex;
     }
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1)) 
         {
-            SwitchWeapon(0);
+            SwitchWeapon();
         }
     }
 }

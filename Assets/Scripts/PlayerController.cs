@@ -11,7 +11,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool isJumping = false;
     [SerializeField] private GrapplingController leftGrapple;
     [SerializeField] private GrapplingController rightGrapple;
-    private bool isGrappling = false;
     private InputController input;
 
     private void Awake()
