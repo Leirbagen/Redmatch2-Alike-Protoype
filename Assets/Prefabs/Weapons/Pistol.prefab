@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 5388050589619406016}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.02, z: 0.233}
+  m_LocalPosition: {x: -0.0021, y: 0.0311, z: 0.233}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -108,14 +108,14 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0844e374bd75f2c4199d99761d9be4ea, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 9064138278648397797}
+      addedObject: {fileID: 2835385785719667974}
   m_SourcePrefab: {fileID: 100100000, guid: 0844e374bd75f2c4199d99761d9be4ea, type: 3}
 --- !u!1 &7063088147317043379 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 0844e374bd75f2c4199d99761d9be4ea, type: 3}
   m_PrefabInstance: {fileID: 7981584628292488674}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &9064138278648397797
+--- !u!114 &2835385785719667974
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -124,15 +124,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 7063088147317043379}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79cc2f908a718094bb2ecbb5a3e8ad11, type: 3}
+  m_Script: {fileID: 11500000, guid: 17befd3061e22484cad5b50a8fec94a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponNozzle: {fileID: 5968365681570312229}
+  maxAmmo: 8
+  fireInterval: 0.5
+  reloadTime: 1
+  fireRange: 300
+  wallsHitLayer:
+    serializedVersion: 2
+    m_Bits: 192
   hitLayer:
     serializedVersion: 2
-    m_Bits: 64
-  fireRange: 200
-  backForce: 4
+    m_Bits: 192
+  backForce: 2
+  weaponDamage: 25
+  weaponNozzle: {fileID: 5968365681570312229}
   bulletHole: {fileID: 5288464404529657000, guid: 952039bddcdc7334fab29df0f1d73473, type: 3}
   flashEffect: {fileID: 9113582395060495145, guid: e265f8f763b9dd94d8d78df3e18fc24c, type: 3}
 --- !u!4 &7588268036309314057 stripped

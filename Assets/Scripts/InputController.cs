@@ -25,6 +25,10 @@ public class InputController : MonoBehaviour
     {
         return input.GetButtonDown(actionID);
     }
+    public bool GetButton(int actionID)
+    {
+        return input.GetButton(actionID);
+    }
     public bool GetMouseButton(int actionID) 
     {
         return input.GetButtonDown(actionID);
@@ -40,5 +44,7 @@ public class InputController : MonoBehaviour
         public const int GRAPPLE_RIGHT = 9;
         public const int FIRE_1 = 10;
         public const int RELOAD_WEAPON = 11;
+        public const int SCROLL_WHEEL = 12;
+        public const int AIM_WEAPON = 13;
     }
 }
