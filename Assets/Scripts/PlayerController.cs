@@ -77,7 +77,6 @@ public class PlayerController : MonoBehaviour
             rightGrapple.StartGrapple();
         }
     }
-
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Floor"))
@@ -85,7 +84,6 @@ public class PlayerController : MonoBehaviour
             isJumping = false;
         }
     }
-
     private void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.CompareTag("Floor"))

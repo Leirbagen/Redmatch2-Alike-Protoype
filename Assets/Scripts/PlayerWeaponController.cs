@@ -101,5 +101,11 @@ public class PlayerWeaponController : MonoBehaviour
         weaponSlots[newIndex].gameObject.SetActive(true);
         activeWeaponIndex = newIndex;
         currentWeapon = weaponSlots[newIndex];
+
+        if (WeaponUI.Instance != null && currentWeapon != null)
+        {
+            WeaponUI.Instance.UpdateBoth(currentWeapon.currentAmmo, currentWeapon.maxAmmo);
+            WeaponUI.Instance.UpdateWeaponIcon(currentWeapon.weaponIcon);
+        }
     }
 }
