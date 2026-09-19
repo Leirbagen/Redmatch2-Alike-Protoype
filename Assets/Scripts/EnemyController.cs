@@ -13,17 +13,26 @@ public class EnemyController : MonoBehaviour, IDamageable
     private Color originalColor;
     [SerializeField] private Directions currentDirection;
     [SerializeField] private Rigidbody enemyBody;
-    private float coolDownWalls = 0f; 
+    private float coolDownWalls = 0f;
 
+    private void Awake()
+    {
+        enemyRenderer = GetComponent<Renderer>();
+        enemyBody = GetComponent<Rigidbody>();
+        if (enemyRenderer != null)
+        {
+            originalColor = enemyRenderer.material.color;
+        }
+    }
 
-    private void Start()
+    private void OnEnable()
     {
         currentHealth = maxHealth;
         enemyRenderer = GetComponent<Renderer>();
         enemyBody = GetComponent<Rigidbody>();
         if (enemyRenderer != null)
         {
-            originalColor = enemyRenderer.material.color;
+            enemyRenderer.material.color = originalColor;
         }
 
     }
@@ -46,7 +55,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     }
     private void Die() 
     {
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
     private void Update()
     {
