@@ -45,7 +45,6 @@ public class HitWeapon : WeaponBase
             }
         }
     }
-
     private void AddRecoil()
     {
         transform.Rotate(-backForce, 0, 0);

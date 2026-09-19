@@ -26,10 +26,10 @@ public class GrapplingController : MonoBehaviour
             joint.autoConfigureConnectedAnchor = false;
             joint.connectedAnchor = grapplePoint;
             float distanceFromPoint = Vector3.Distance(playerBody.transform.position, grapplePoint);
-            joint.maxDistance = distanceFromPoint * 0.5f; 
-            joint.minDistance = distanceFromPoint * 0.1f;
-            joint.spring = 15f;
-            joint.damper = 3f;
+            joint.maxDistance = distanceFromPoint * 0.6f; 
+            joint.minDistance = distanceFromPoint * 0.25f;
+            joint.spring = 20f;
+            joint.damper = 8f;
             joint.massScale = 4.5f;
             lineRenderer.positionCount = 2;
         }

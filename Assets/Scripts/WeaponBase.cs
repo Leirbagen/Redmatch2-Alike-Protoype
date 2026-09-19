@@ -7,6 +7,7 @@ public abstract class WeaponBase : MonoBehaviour
     public int maxAmmo = 8;
     public float fireInterval = 0.5f;
     public float reloadTime = 1f;
+    public Sprite weaponIcon;
     public int currentAmmo { get; protected set; }
     protected bool canShoot = true;
     protected bool isReloading = false;
@@ -26,9 +27,11 @@ public abstract class WeaponBase : MonoBehaviour
     {
         canShoot = false;
         currentAmmo--;
-
+        if (WeaponUI.Instance != null)
+        {
+            WeaponUI.Instance.UpdateBoth(currentAmmo, maxAmmo);
+        }
         ExecuteShoot(); 
-
         yield return new WaitForSeconds(fireInterval);
         canShoot = true;
     }
@@ -45,6 +48,10 @@ public abstract class WeaponBase : MonoBehaviour
         isReloading = true;
         yield return new WaitForSeconds(reloadTime);
         currentAmmo = maxAmmo;
+        if (WeaponUI.Instance != null)
+        {
+            WeaponUI.Instance.UpdateBoth(currentAmmo, maxAmmo);
+        }
         isReloading = false;
     }
     protected abstract void ExecuteShoot();

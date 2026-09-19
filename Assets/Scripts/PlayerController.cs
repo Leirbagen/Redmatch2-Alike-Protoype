@@ -26,9 +26,28 @@ public class PlayerController : MonoBehaviour
         float movX = input.GetAxis(InputController.Input.MOVEMENT_X);
         float movZ = input.GetAxis(InputController.Input.MOVEMENT_Y);
         Vector3 inputMovement = (transform.right * movX) + (transform.forward * movZ);
-        Vector3 finalVelocity = inputMovement * velocity;
-        finalVelocity.y = myBody.linearVelocity.y;
-        myBody.linearVelocity = finalVelocity;
+        if (isJumping == false)
+        {
+            Vector3 finalVelocity = inputMovement * velocity;
+            finalVelocity.y = myBody.linearVelocity.y;
+            myBody.linearVelocity = finalVelocity;
+        }
+        else
+        {
+            bool isGrappling = GetComponent<SpringJoint>() != null;
+
+            if (isGrappling)
+            {
+                myBody.AddForce(inputMovement * (velocity * 0.4f), ForceMode.Acceleration);
+            }
+            else
+            {
+                Vector3 currentFlatVelocity = new Vector3(myBody.linearVelocity.x, 0f, myBody.linearVelocity.z);
+                Vector3 targetFlatVelocity = inputMovement * velocity;
+                Vector3 newFlatVelocity = Vector3.MoveTowards(currentFlatVelocity, targetFlatVelocity, (velocity * 8f) * Time.deltaTime);
+                myBody.linearVelocity = new Vector3(newFlatVelocity.x, myBody.linearVelocity.y, newFlatVelocity.z);
+            }
+        }
     }
     private void Jump() 
     {
@@ -58,7 +77,6 @@ public class PlayerController : MonoBehaviour
             rightGrapple.StartGrapple();
         }
     }
-
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Floor"))
@@ -66,7 +84,6 @@ public class PlayerController : MonoBehaviour
             isJumping = false;
         }
     }
-
     private void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.CompareTag("Floor"))

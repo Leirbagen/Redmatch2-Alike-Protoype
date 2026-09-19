@@ -13,12 +13,10 @@ public class CameraController : MonoBehaviour
     {
         input = InputController.Instance;
     }
-    void Start()
+    private void Start()
     {
         Cursor.visible = false;
     }
-
-
     private void Update()
     {
         float ValorX = input.GetAxis(InputController.Input.MOUSE_X) * sensibility * Time.deltaTime;
