@@ -3,7 +3,6 @@ using System.Collections;
 
 public abstract class WeaponBase : MonoBehaviour
 {
-    
     public int maxAmmo = 8;
     public float fireInterval = 0.5f;
     public float reloadTime = 1f;
@@ -11,6 +10,7 @@ public abstract class WeaponBase : MonoBehaviour
     public int currentAmmo { get; protected set; }
     protected bool canShoot = true;
     protected bool isReloading = false;
+
 
     protected virtual void Start()
     {

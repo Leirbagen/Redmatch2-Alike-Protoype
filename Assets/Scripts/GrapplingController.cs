@@ -21,6 +21,7 @@ public class GrapplingController : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(cameraLook.position, cameraLook.forward, out hit, maxDistance, grappleableLayer))
         {
+            StopGrapple();
             grapplePoint = hit.point;
             joint = playerBody.AddComponent<SpringJoint>();
             joint.autoConfigureConnectedAnchor = false;

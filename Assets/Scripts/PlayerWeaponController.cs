@@ -11,7 +11,8 @@ public class PlayerWeaponController : MonoBehaviour
     public float aimSpeed = 9f;
     private WeaponBase[] weaponSlots = new WeaponBase[2];
     public int activeWeaponIndex { get; private set; }
-    private WeaponBase currentWeapon; 
+    private WeaponBase currentWeapon;
+    private bool isSwitchingAxis = false;
 
 
     private void Start()
@@ -25,7 +26,7 @@ public class PlayerWeaponController : MonoBehaviour
     }
     private void Update()
     {
-        
+
         if (currentWeapon != null)
         {
             if (InputController.Instance.GetButtonDown(InputController.Input.FIRE_1))
@@ -47,27 +48,39 @@ public class PlayerWeaponController : MonoBehaviour
         }
 
         float scrollValue = InputController.Instance.GetAxis(InputController.Input.SCROLL_WHEEL);
-        if (scrollValue > 0f) 
+        if (scrollValue > 0.1f)
         {
-            if (activeWeaponIndex >= weaponSlots.Length - 1)
+            if (!isSwitchingAxis)
             {
-                SwitchWeapon(0); 
-            }
-            else
-            {
-                SwitchWeapon(activeWeaponIndex + 1); 
+                if (activeWeaponIndex >= weaponSlots.Length - 1)
+                {
+                    SwitchWeapon(0);
+                }
+                else
+                {
+                    SwitchWeapon(activeWeaponIndex + 1);
+                }
+                isSwitchingAxis = true;
             }
         }
-        else if (scrollValue < 0f) 
+        else if (scrollValue < -0.1f)
         {
-            if (activeWeaponIndex <= 0)
+            if (!isSwitchingAxis)
             {
-                SwitchWeapon(weaponSlots.Length - 1); 
+                if (activeWeaponIndex <= 0)
+                {
+                    SwitchWeapon(weaponSlots.Length - 1);
+                }
+                else
+                {
+                    SwitchWeapon(activeWeaponIndex - 1);
+                }
+                isSwitchingAxis = true;
             }
-            else
-            {
-                SwitchWeapon(activeWeaponIndex - 1); 
-            }
+        }
+        else
+        {
+            isSwitchingAxis = false;
         }
     }
     private void AddWeapon(WeaponBase p_weaponPrefab)

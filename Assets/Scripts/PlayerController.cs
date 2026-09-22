@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool isJumping = false;
     [SerializeField] private GrapplingController leftGrapple;
     [SerializeField] private GrapplingController rightGrapple;
+    [SerializeField] private float groundCheckDistance = 1.1f;
     private InputController input;
 
     private void Awake()
@@ -44,7 +45,7 @@ public class PlayerController : MonoBehaviour
             {
                 Vector3 currentFlatVelocity = new Vector3(myBody.linearVelocity.x, 0f, myBody.linearVelocity.z);
                 Vector3 targetFlatVelocity = inputMovement * velocity;
-                Vector3 newFlatVelocity = Vector3.MoveTowards(currentFlatVelocity, targetFlatVelocity, (velocity * 8f) * Time.deltaTime);
+                Vector3 newFlatVelocity = Vector3.MoveTowards(currentFlatVelocity, targetFlatVelocity, (velocity * 8f) * Time.fixedDeltaTime);
                 myBody.linearVelocity = new Vector3(newFlatVelocity.x, myBody.linearVelocity.y, newFlatVelocity.z);
             }
         }
@@ -55,8 +56,8 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-        MovePlayer();
-
+        isJumping = !Physics.Raycast(transform.position, Vector3.down, groundCheckDistance);
+        Debug.DrawRay(transform.position, Vector3.down * groundCheckDistance, Color.red);
         if (input.GetButtonDown(InputController.Input.JUMP))
         {
             leftGrapple.StopGrapple();
@@ -64,11 +65,10 @@ public class PlayerController : MonoBehaviour
             if (isJumping == false)
             {
                 Jump();
-                isJumping = true;
+                isJumping = true; 
             }
         }
-
-        if (input.GetButtonDown(InputController.Input.GRAPPLE_LEFT)) 
+        if (input.GetButtonDown(InputController.Input.GRAPPLE_LEFT))
         {
             leftGrapple.StartGrapple();
         }
@@ -77,19 +77,10 @@ public class PlayerController : MonoBehaviour
             rightGrapple.StartGrapple();
         }
     }
-    private void OnCollisionEnter(Collision collision)
+
+    private void FixedUpdate()
     {
-        if (collision.gameObject.CompareTag("Floor"))
-        {
-            isJumping = false;
-        }
-    }
-    private void OnCollisionExit(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Floor"))
-        {
-            isJumping = true;
-        }
+        MovePlayer();
     }
 }
 
