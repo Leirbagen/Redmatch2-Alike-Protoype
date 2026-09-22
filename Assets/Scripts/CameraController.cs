@@ -4,9 +4,8 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     private InputController input;
-    [SerializeField] private float sensibility = 35;
+    [SerializeField] private float sensibility = 200;
     public Transform Player;
-    private float XRotation;
     private float YRotation;
 
     private void Awake()
@@ -16,12 +15,12 @@ public class CameraController : MonoBehaviour
     private void Start()
     {
         Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
     private void Update()
     {
         float ValorX = input.GetAxis(InputController.Input.MOUSE_X) * sensibility * Time.deltaTime;
         float ValorY = input.GetAxis(InputController.Input.MOUSE_Y) * sensibility * Time.deltaTime;
-        XRotation += ValorX;
         YRotation -= ValorY;
         YRotation = math.clamp(YRotation, -80, 80);
         transform.localRotation = Quaternion.Euler(YRotation,0f,0f);

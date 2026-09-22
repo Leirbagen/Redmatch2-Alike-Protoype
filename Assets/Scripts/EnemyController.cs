@@ -63,8 +63,12 @@ public class EnemyController : MonoBehaviour, IDamageable
         {
             coolDownWalls -= Time.deltaTime;
         }
+    }
+
+    private void FixedUpdate()
+    {
         Vector3 movDirection = Vector3.zero;
-        switch (currentDirection) 
+        switch (currentDirection)
         {
             case Directions.F:
                 movDirection = Vector3.forward;
@@ -80,7 +84,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                 break;
         }
         Vector3 finalVelocity = movDirection * velocity;
-        finalVelocity.y = enemyBody.linearVelocity.y; 
+        finalVelocity.y = enemyBody.linearVelocity.y;
         enemyBody.linearVelocity = finalVelocity;
     }
     private void OnCollisionStay(Collision collision)
