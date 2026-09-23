@@ -157,3 +157,4 @@ MonoBehaviour:
   damageEffect: {fileID: 3479063009878197008, guid: 3f934433a2334e340b10c63a354af5cf, type: 3}
   currentDirection: 0
   enemyBody: {fileID: 0}
+  enemyFractured: {fileID: 7112685753341914992, guid: 637273eea65eb3d448c9bd9a33992822, type: 3}

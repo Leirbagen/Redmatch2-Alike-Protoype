@@ -1,3 +1,4 @@
+using DinoFracture;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -14,6 +15,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     [SerializeField] private Directions currentDirection;
     [SerializeField] private Rigidbody enemyBody;
     private float coolDownWalls = 0f;
+    public GameObject enemyFractured;
 
     private void Awake()
     {
@@ -55,6 +57,11 @@ public class EnemyController : MonoBehaviour, IDamageable
     }
     private void Die() 
     {
+        if (enemyFractured != null)
+        {
+            GameObject corpseClone = Instantiate(enemyFractured, transform.position, transform.rotation);
+            Destroy(corpseClone, 5f);
+        }
         gameObject.SetActive(false);
     }
     private void Update()

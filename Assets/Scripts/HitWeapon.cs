@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using DamageNumbersPro;
 public class HitWeapon : WeaponBase
 {
     public float fireRange = 200f;
@@ -11,6 +11,7 @@ public class HitWeapon : WeaponBase
     public GameObject bulletHole;
     public GameObject flashEffect;
     private Transform cameraPlayerTransform;
+    public DamageNumber numberPrefab;
     protected override void Start()
     {
         base.Start(); 
@@ -37,6 +38,7 @@ public class HitWeapon : WeaponBase
             if (damageableObject != null)
             {
                 damageableObject.TakeDamage(weaponDamage);
+                numberPrefab.Spawn(hit.point, weaponDamage);
             }
             else 
             {
