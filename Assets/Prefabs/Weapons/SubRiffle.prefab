@@ -218,6 +218,7 @@ MonoBehaviour:
   weaponNozzle: {fileID: 5583830688451359052}
   bulletHole: {fileID: 5288464404529657000, guid: 952039bddcdc7334fab29df0f1d73473, type: 3}
   flashEffect: {fileID: 9113582395060495145, guid: e265f8f763b9dd94d8d78df3e18fc24c, type: 3}
+  numberPrefab: {fileID: 4888194837565303189, guid: eb5dbf6f58c9c284a902bd85e177c013, type: 3}
 --- !u!4 &7588268036309314057 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0844e374bd75f2c4199d99761d9be4ea, type: 3}
