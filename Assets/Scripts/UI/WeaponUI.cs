@@ -7,9 +7,9 @@ public class WeaponUI : MonoBehaviour
     public static WeaponUI Instance { get; private set; }
     public TMP_Text currentBullets;
     public TMP_Text totalBullets;
-    public Image weaponIconDisplay;
-    public Image ammoIconDisplay;
-
+    public Image[] weaponIcons;
+    private Color activeColor = new Color(1f, 1f, 1f, 1f);
+    private Color inactiveColor = new Color(0.6f, 0.6f, 0.6f, 0.4f);
     private void Awake()
     {
         if (Instance != null)
@@ -32,12 +32,33 @@ public class WeaponUI : MonoBehaviour
         UpdateCurrent(current);
         UpdateTotal(total);
     }
-    public void UpdateWeaponIcon(Sprite newIcon, Sprite newAmmoIcon)
+    public void UpdateActiveWeaponIndex(int activeIndex)
     {
-        if (weaponIconDisplay != null && newIcon != null && newAmmoIcon != null)
+        for (int i = 0; i < weaponIcons.Length; i++)
         {
-            weaponIconDisplay.sprite = newIcon;
-            ammoIconDisplay.sprite = newAmmoIcon;
+            if (weaponIcons[i] != null)
+            {
+                if (i == activeIndex)
+                {
+                    weaponIcons[i].color = activeColor;
+                }
+                else
+                {
+                    weaponIcons[i].color = inactiveColor;
+                }
+            }
         }
+    }
+    public void ClearWeaponUI()
+    {
+        if (currentBullets != null) 
+        {
+            currentBullets.text = "--";
+        }
+        if (totalBullets != null) 
+        {
+            totalBullets.text = "--";
+        } 
+        UpdateActiveWeaponIndex(-1); 
     }
 }

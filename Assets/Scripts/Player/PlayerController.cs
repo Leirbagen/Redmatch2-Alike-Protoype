@@ -17,13 +17,10 @@ public class PlayerController : MonoBehaviour
     public AudioClip jumpSound;
     public AudioClip landSound;
 
-    private void Awake()
-    {
-        input = InputController.Instance;
-    }
     private void Start()
     {
         myBody = GetComponent<Rigidbody>();
+        input = InputController.Instance;
     }
     private void MovePlayer() 
     {
@@ -42,7 +39,7 @@ public class PlayerController : MonoBehaviour
 
             if (isGrappling)
             {
-                myBody.AddForce(inputMovement * (velocity * 0.4f), ForceMode.Acceleration);
+                myBody.AddForce(inputMovement * (velocity * 0.5f), ForceMode.Acceleration);
             }
             else
             {
@@ -61,7 +58,7 @@ public class PlayerController : MonoBehaviour
     {
         bool touchingGround = Physics.Raycast(transform.position, Vector3.down, groundCheckDistance);
         Debug.DrawRay(transform.position, Vector3.down * groundCheckDistance, Color.red);
-        if (isJumping && touchingGround)
+        if (isJumping && touchingGround && myBody.linearVelocity.y <= -0.1f)
         {
             playerAudio.PlayOneShot(landSound);
         }
