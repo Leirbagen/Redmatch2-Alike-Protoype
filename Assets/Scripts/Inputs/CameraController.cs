@@ -8,12 +8,9 @@ public class CameraController : MonoBehaviour
     public Transform Player;
     private float YRotation;
 
-    private void Awake()
-    {
-        input = InputController.Instance;
-    }
     private void Start()
     {
+        input = InputController.Instance;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }

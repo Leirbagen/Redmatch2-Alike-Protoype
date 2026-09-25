@@ -30,8 +30,8 @@ public class GrapplingController : MonoBehaviour
             joint.maxDistance = distanceFromPoint * 0.6f; 
             joint.minDistance = distanceFromPoint * 0.25f;
             joint.spring = 20f;
-            joint.damper = 8f;
-            joint.massScale = 4.5f;
+            joint.damper = 3f;
+            joint.massScale = 6f;
             lineRenderer.positionCount = 2;
         }
     }

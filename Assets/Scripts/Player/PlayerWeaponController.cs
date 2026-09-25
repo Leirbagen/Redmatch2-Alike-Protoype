@@ -22,7 +22,10 @@ public class PlayerWeaponController : MonoBehaviour
         {
             AddWeapon(startingWeapon);
         }
-        SwitchWeapon(0);
+        if (WeaponUI.Instance != null)
+        {
+            WeaponUI.Instance.ClearWeaponUI();
+        }
     }
     private void Update()
     {
@@ -118,7 +121,7 @@ public class PlayerWeaponController : MonoBehaviour
         if (WeaponUI.Instance != null && currentWeapon != null)
         {
             WeaponUI.Instance.UpdateBoth(currentWeapon.currentAmmo, currentWeapon.maxAmmo);
-            WeaponUI.Instance.UpdateWeaponIcon(currentWeapon.weaponIcon, currentWeapon.ammoIcon);
+            WeaponUI.Instance.UpdateActiveWeaponIndex(activeWeaponIndex);
         }
     }
 }
