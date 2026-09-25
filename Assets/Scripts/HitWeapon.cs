@@ -10,6 +10,8 @@ public class HitWeapon : WeaponBase
     public Transform weaponNozzle;
     public GameObject bulletHole;
     public GameObject flashEffect;
+    public AudioSource weaponAudio;
+    public AudioClip shootSound;
     private Transform cameraPlayerTransform;
     public DamageNumber numberPrefab;
     protected override void Start()
@@ -26,6 +28,10 @@ public class HitWeapon : WeaponBase
 
     protected override void ExecuteShoot()
     {
+        if (weaponAudio != null && shootSound != null)
+        {
+            weaponAudio.PlayOneShot(shootSound);
+        }
         if (flashEffect != null && weaponNozzle != null)
         {
             GameObject flashClone = Instantiate(flashEffect, weaponNozzle.position, Quaternion.Euler(weaponNozzle.forward), transform);

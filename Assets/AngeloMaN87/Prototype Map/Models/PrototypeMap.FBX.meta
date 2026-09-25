@@ -1,7 +1,14 @@
 fileFormatVersion: 2
 guid: be3ed9816d019ff4a85901f7a3aae376
+AssetOrigin:
+  serializedVersion: 1
+  productId: 315588
+  packageName: Prototype Map
+  packageVersion: 1.0.2
+  assetPath: Assets/AngeloMaN87/Prototype Map/Models/PrototypeMap.FBX
+  uploadId: 770492
 ModelImporter:
-  serializedVersion: 21300
+  serializedVersion: 24000
   internalIDToNameTable: []
   externalObjects:
   - first:
@@ -18,7 +25,8 @@ ModelImporter:
     materialImportMode: 2
     materialName: 0
     materialSearch: 1
-    materialLocation: 1
+    materialLocation: 0
+    searchTexturesGlobally: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -26,8 +34,6 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 1
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -50,6 +56,7 @@ ModelImporter:
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
+    importPhysicalCameras: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
@@ -110,15 +117,9 @@ ModelImporter:
   humanoidOversampling: 1
   avatarSetup: 0
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 0
   remapMaterialsIfMaterialImportModeIsNone: 0
   additionalBone: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 315588
-  packageName: Prototype Map
-  packageVersion: 1.0.2
-  assetPath: Assets/AngeloMaN87/Prototype Map/Models/PrototypeMap.FBX
-  uploadId: 770492

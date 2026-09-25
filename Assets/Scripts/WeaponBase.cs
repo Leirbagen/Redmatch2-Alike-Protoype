@@ -7,6 +7,7 @@ public abstract class WeaponBase : MonoBehaviour
     public float fireInterval = 0.5f;
     public float reloadTime = 1f;
     public Sprite weaponIcon;
+    public Sprite ammoIcon;
     public int currentAmmo { get; protected set; }
     protected bool canShoot = true;
     protected bool isReloading = false;

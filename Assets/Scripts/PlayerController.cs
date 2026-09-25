@@ -13,6 +13,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GrapplingController rightGrapple;
     [SerializeField] private float groundCheckDistance = 1.1f;
     private InputController input;
+    public AudioSource playerAudio;
+    public AudioClip jumpSound;
+    public AudioClip landSound;
 
     private void Awake()
     {
@@ -56,8 +59,13 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-        isJumping = !Physics.Raycast(transform.position, Vector3.down, groundCheckDistance);
+        bool touchingGround = Physics.Raycast(transform.position, Vector3.down, groundCheckDistance);
         Debug.DrawRay(transform.position, Vector3.down * groundCheckDistance, Color.red);
+        if (isJumping && touchingGround)
+        {
+            playerAudio.PlayOneShot(landSound);
+        }
+        isJumping = !touchingGround;
         if (input.GetButtonDown(InputController.Input.JUMP))
         {
             leftGrapple.StopGrapple();
@@ -65,7 +73,8 @@ public class PlayerController : MonoBehaviour
             if (isJumping == false)
             {
                 Jump();
-                isJumping = true; 
+                isJumping = true;
+                playerAudio.PlayOneShot(jumpSound);
             }
         }
         if (input.GetButtonDown(InputController.Input.GRAPPLE_LEFT))

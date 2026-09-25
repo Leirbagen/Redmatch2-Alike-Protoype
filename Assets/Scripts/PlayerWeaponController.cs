@@ -118,7 +118,7 @@ public class PlayerWeaponController : MonoBehaviour
         if (WeaponUI.Instance != null && currentWeapon != null)
         {
             WeaponUI.Instance.UpdateBoth(currentWeapon.currentAmmo, currentWeapon.maxAmmo);
-            WeaponUI.Instance.UpdateWeaponIcon(currentWeapon.weaponIcon);
+            WeaponUI.Instance.UpdateWeaponIcon(currentWeapon.weaponIcon, currentWeapon.ammoIcon);
         }
     }
 }
