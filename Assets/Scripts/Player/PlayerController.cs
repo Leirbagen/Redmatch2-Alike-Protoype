@@ -2,10 +2,11 @@ using System.Collections;
 using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using Rewired;
+using Fusion;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
-    private Rigidbody myBody;
+    private NetworkCharacterController characterController;
     [SerializeField] private float velocity = 5;
     [SerializeField] private float forceJump = 5;
     [SerializeField] private bool isJumping = false;
@@ -67,7 +68,7 @@ public class PlayerController : MonoBehaviour
                 highestYPosition = transform.position.y;
             }
         }
-        if (isSwinging) //in order not to collect distance of falling
+        if (isSwinging) 
         {
             highestYPosition = transform.position.y;
         }
