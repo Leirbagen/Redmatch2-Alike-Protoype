@@ -3,14 +3,6 @@ using UnityEngine;
 using UnityEngine.Pool;
 using UnityEditor.EditorTools;
 
-[System.Serializable]
-public class PoolConfig
-{
-    public string poolID;
-    public GameObject prefab;
-    public int defaultCapacity = 20;
-    public int maxSize = 100;
-}
 
 public class PoolManager : MonoBehaviour
 {
@@ -36,13 +28,13 @@ public class PoolManager : MonoBehaviour
         {
             if (config.prefab == null || string.IsNullOrEmpty(config.poolID))
             {
-                Debug.LogWarning("[PoolManager] Hay una config sin poolID o sin prefab. Se ignora.", this);
+                Debug.LogWarning("no ID", this);
                 continue;
             }
 
             if (pools.ContainsKey(config.poolID))
             {
-                Debug.LogWarning($"[PoolManager] El poolID '{config.poolID}' está repetido. Se ignora la copia.", this);
+                Debug.LogWarning("SAME ID", this);
                 continue;
             }
 
@@ -67,7 +59,7 @@ public class PoolManager : MonoBehaviour
     {
         if (!pools.TryGetValue(poolID, out var pool))
         {
-            Debug.LogWarning($"[PoolManager] No existe un pool con el ID '{poolID}'.", this);
+            Debug.LogWarning($"NOT EXISTS '{poolID}'.", this);
             return null;
         }
         GameObject obj = pool.Get();
@@ -89,7 +81,16 @@ public class PoolManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"[PoolManager] No existe un pool con el ID '{poolID}'.", this);
+            Debug.LogWarning($"NOT EXISTS '{poolID}'.", this);
         }
+    }
+
+    [System.Serializable]
+    public class PoolConfig
+    {
+        public string poolID;
+        public GameObject prefab;
+        public int defaultCapacity = 20;
+        public int maxSize = 100;
     }
 }

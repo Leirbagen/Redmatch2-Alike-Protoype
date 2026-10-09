@@ -1,5 +1,6 @@
 using DamageNumbersPro;
 using System;
+using System.Collections;
 using UnityEngine;
 public class HitWeapon : WeaponBase
 {
@@ -18,6 +19,8 @@ public class HitWeapon : WeaponBase
     public Transform weaponNozzle;
     public GameObject bulletHole;
     public GameObject flashEffect;
+    public string flashPoolID = "ShotFlashEffect"; 
+    public string bulletHolePoolID = "BulletHole";
     public AudioSource weaponAudio;
     public AudioClip shootSound;
     private Transform cameraPlayerTransform;
@@ -68,10 +71,14 @@ public class HitWeapon : WeaponBase
         {
             weaponAudio.PlayOneShot(shootSound);
         }
-        if (flashEffect != null && weaponNozzle != null)
+        if (!string.IsNullOrEmpty(flashPoolID) && weaponNozzle != null)
         {
-            GameObject flashClone = Instantiate(flashEffect, weaponNozzle.position, Quaternion.Euler(weaponNozzle.forward), transform);
-            Destroy(flashClone, 0.1f);
+            GameObject flashClone = PoolManager.Instance.Get(flashPoolID, weaponNozzle.position, Quaternion.Euler(weaponNozzle.forward));
+            if (flashClone != null)
+            {
+                flashClone.transform.SetParent(transform);
+                PoolManager.Instance.StartCoroutine(ReleaseAfterDelay(flashPoolID, flashClone, 0.1f));
+            }
         }
         AddRecoil();
         if (Physics.Raycast(cameraPlayerTransform.position, cameraPlayerTransform.forward, out RaycastHit hit, fireRange, hitLayer | wallsHitLayer))
@@ -82,10 +89,13 @@ public class HitWeapon : WeaponBase
                 damageableObject.TakeDamage(weaponDamage);
                 numberPrefab.Spawn(hit.point, weaponDamage);
             }
-            else
+            if (!string.IsNullOrEmpty(bulletHolePoolID))
             {
-                GameObject bulletHoleClone = Instantiate(bulletHole, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(hit.normal));
-                Destroy(bulletHoleClone, 4f);
+                GameObject bulletHoleClone = PoolManager.Instance.Get(bulletHolePoolID, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(hit.normal));
+                if (bulletHoleClone != null)
+                {
+                    PoolManager.Instance.StartCoroutine(ReleaseAfterDelay(bulletHolePoolID, bulletHoleClone, 4f));
+                }
             }
         }
     }
@@ -93,5 +103,13 @@ public class HitWeapon : WeaponBase
     {
         transform.Rotate(-backForce, 0, 0);
         transform.position -= transform.forward * (backForce / 50f);
+    }
+    private IEnumerator ReleaseAfterDelay(string poolID, GameObject obj, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (obj != null && obj.activeInHierarchy)
+        {
+            PoolManager.Instance.Release(poolID, obj);
+        }
     }
 }
