@@ -314,7 +314,8 @@ MonoBehaviour:
   EnableInterpolation: 1
   Flags: 262146
   NestedObjects: []
-  NetworkedBehaviours: []
+  NetworkedBehaviours:
+  - {fileID: 6910790806873388749}
   ForceRemoteRenderTimeframe: 0
 --- !u!1 &1682701781649558221
 GameObject:
@@ -960,7 +961,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sensibility: 150
-  Player: {fileID: 2516003810114803075}
+  playerBody: {fileID: 2516003810114803075}
 --- !u!81 &277959840887105803
 AudioListener:
   m_ObjectHideFlags: 0

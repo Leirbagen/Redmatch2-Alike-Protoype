@@ -1,27 +1,37 @@
+using Fusion;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+public class CameraController : NetworkBehaviour
 {
-    private InputController input;
-    [SerializeField] private float sensibility = 200;
-    public Transform Player;
-    private float YRotation;
+    [SerializeField] private float sensibility = 200f;
+    public Transform playerBody;
+    private float pitchRotation;
 
-    private void Start()
+    public override void Spawned()
     {
-        input = InputController.Instance;
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        if (HasInputAuthority)
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
     }
-    private void Update()
+
+    public override void FixedUpdateNetwork()
     {
-        if (Time.timeScale == 0f) return;
-        float ValorX = input.GetAxis(InputController.Input.MOUSE_X) * sensibility * Time.deltaTime;
-        float ValorY = input.GetAxis(InputController.Input.MOUSE_Y) * sensibility * Time.deltaTime;
-        YRotation -= ValorY;
-        YRotation = math.clamp(YRotation, -80, 80);
-        transform.localRotation = Quaternion.Euler(YRotation,0f,0f);
-        Player.Rotate(Vector3.up * ValorX);
+        if (GetInput(out NetworkInputData data))
+        {
+            float lookX = data.look.x * sensibility * Runner.DeltaTime;
+            float lookY = data.look.y * sensibility * Runner.DeltaTime;
+
+            if (playerBody != null)
+            {
+                playerBody.Rotate(Vector3.up * lookX);
+            }
+
+            pitchRotation -= lookY;
+            pitchRotation = math.clamp(pitchRotation, -80, 80);
+            transform.localRotation = Quaternion.Euler(pitchRotation, 0f, 0f);
+        }
     }
 }
