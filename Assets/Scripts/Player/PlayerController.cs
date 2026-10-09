@@ -1,133 +1,92 @@
-using System.Collections;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
-using Rewired;
+using Fusion;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
-    private Rigidbody myBody;
+    private NetworkCharacterController characterController;
     [SerializeField] private float velocity = 5;
-    [SerializeField] private float forceJump = 5;
-    [SerializeField] private bool isJumping = false;
-    [SerializeField] private GrapplingController leftGrapple;
-    [SerializeField] private GrapplingController rightGrapple;
-    public bool isSwinging => leftGrapple.IsHooked || rightGrapple.IsHooked;
-    [SerializeField] private float swingControlForce = 20f;
-    [SerializeField] private float groundCheckDistance = 1.1f;
     [SerializeField] private float fallDistanceThreshold = 20f;
     [SerializeField] private float damagePerMeter = 2f;
     [SerializeField] private int maxFallDamage = 40;
-    [SerializeField] private float airControlForce = 15f;
-    private bool leftWaitRelease;
-    private bool rightWaitRelease;
     private float highestYPosition;
-    private InputController input;
+    private bool wasGrounded;
     public AudioSource playerAudio;
     public AudioClip jumpSound;
     public AudioClip landSound;
+    public GameObject cameraLook;
 
-    private void Start()
+    private void Awake()
     {
-        myBody = GetComponent<Rigidbody>();
-        input = InputController.Instance;
+        characterController = GetComponent<NetworkCharacterController>();
     }
-    private void MovePlayer()
+
+    public override void Spawned()
     {
-        float movX = input.GetAxis(InputController.Input.MOVEMENT_X);
-        float movZ = input.GetAxis(InputController.Input.MOVEMENT_Y);
-        Vector3 inputMovement = (transform.right * movX) + (transform.forward * movZ);
-        if (isJumping == false)
+        base.Spawned();
+
+        if (HasInputAuthority)
         {
-            Vector3 finalVelocity = inputMovement.normalized * velocity;
-            finalVelocity.y = myBody.linearVelocity.y;
-            myBody.linearVelocity = finalVelocity;
-        }
-        else if (isSwinging)
-        {
-            myBody.AddForce(inputMovement * swingControlForce, ForceMode.Acceleration);
+            if (cameraLook != null)
+            {
+                cameraLook.SetActive(true);
+                cameraLook.tag = "MainCamera";
+            }
         }
         else
         {
-            myBody.AddForce(inputMovement * airControlForce, ForceMode.Acceleration);
+            if (cameraLook != null)
+            {
+                cameraLook.SetActive(false);
+            }
         }
     }
-    private void Jump()
-    {
-        myBody.AddForce(Vector3.up * forceJump, ForceMode.Impulse);
-    }
-    private void Update()
-    {
-        bool touchingGround = Physics.Raycast(transform.position, Vector3.down, groundCheckDistance);
-        Debug.DrawRay(transform.position, Vector3.down * groundCheckDistance, Color.red);
 
-        if (!touchingGround)
+    public override void FixedUpdateNetwork()
+    {
+        base.FixedUpdateNetwork();
+
+        if (GetInput(out NetworkInputData data))
+        {
+            Vector3 moveDirection = (transform.right * data.move.x) + (transform.forward * data.move.y);
+            moveDirection.Normalize();
+            characterController.Move(moveDirection * velocity * Runner.DeltaTime);
+            if (data.buttons.IsSet(InputButton.jump))
+            {
+                if (characterController.Grounded)
+                {
+                    characterController.Jump();
+                    if (playerAudio != null && jumpSound != null) playerAudio.PlayOneShot(jumpSound);
+                }
+            }
+        }
+
+        if (!characterController.Grounded)
         {
             if (transform.position.y > highestYPosition)
             {
                 highestYPosition = transform.position.y;
             }
         }
-        if (isSwinging) //in order not to collect distance of falling
+        else
         {
-            highestYPosition = transform.position.y;
-        }
-        if (isJumping && touchingGround)
-        {
-            playerAudio.PlayOneShot(landSound);
-            float fallDistance = highestYPosition - transform.position.y;
-            if (fallDistance > fallDistanceThreshold)
+            if (!wasGrounded)
             {
-                int calculatedDamage = Mathf.RoundToInt((fallDistance - fallDistanceThreshold) * damagePerMeter);
-                int finalDamage = Mathf.Min(calculatedDamage, maxFallDamage);
-                if (TryGetComponent<IDamageable>(out var damageable))
+                if (playerAudio != null && landSound != null) playerAudio.PlayOneShot(landSound);
+                float fallDistance = highestYPosition - transform.position.y;
+
+                if (fallDistance > fallDistanceThreshold)
                 {
-                    damageable.TakeDamage(finalDamage);
+                    int calculatedDamage = Mathf.RoundToInt((fallDistance - fallDistanceThreshold) * damagePerMeter);
+                    int finalDamage = Mathf.Min(calculatedDamage, maxFallDamage);
+
+                    if (TryGetComponent<IDamageable>(out var damageable))
+                    {
+                        damageable.TakeDamage(finalDamage);
+                    }
                 }
             }
-        }
-        if (touchingGround)
-        {
             highestYPosition = transform.position.y;
         }
-        isJumping = !touchingGround;
-        if (input.GetButtonDown(InputController.Input.JUMP))
-        {
-            leftGrapple.StopGrapple();
-            rightGrapple.StopGrapple();
-            leftWaitRelease = true;
-            rightWaitRelease = true;
-            if (isJumping == false)
-            {
-                Jump();
-                playerAudio.PlayOneShot(jumpSound);
-            }
-        }
-        HandleGrapples();
-    }
-    private void FixedUpdate()
-    {
-        MovePlayer();
-    }
-
-    private void HandleGrapples()
-    {
-        if (input.GetButton(InputController.Input.GRAPPLE_LEFT) && !leftWaitRelease)
-        {
-            leftGrapple.StartGrapple();
-        }
-        else
-        {
-            leftWaitRelease = false;
-            leftGrapple.StopGrapple();
-        }
-        if (input.GetButton(InputController.Input.GRAPPLE_RIGHT) && !rightWaitRelease)
-        {
-            rightGrapple.StartGrapple();
-        }
-        else
-        {
-            rightWaitRelease = false;
-            rightGrapple.StopGrapple();
-        }
+        wasGrounded = characterController.Grounded;
     }
 }
