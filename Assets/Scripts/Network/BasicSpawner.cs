@@ -32,7 +32,20 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
             _spawnedCharacters.Remove(player);
         }
     }
-    void INetworkRunnerCallbacks.OnInput(NetworkRunner runner, NetworkInput input) { }
+    void INetworkRunnerCallbacks.OnInput(NetworkRunner runner, NetworkInput input)
+    {
+        var data = new NetworkInputData();
+        float movX = InputController.Instance.GetAxis(InputController.Input.MOVEMENT_X);
+        float movY = InputController.Instance.GetAxis(InputController.Input.MOVEMENT_Y);
+        data.move = new Vector2(movX, movY);
+
+        float lookX = InputController.Instance.GetAxis(InputController.Input.MOUSE_X);
+        float lookY = InputController.Instance.GetAxis(InputController.Input.MOUSE_Y);
+        data.look = new Vector2(lookX, lookY);
+        
+        data.buttons.Set(InputButton.jump, InputController.Instance.GetButton(InputController.Input.JUMP)); //use an index to find which button we are referring to and changes it's state
+        input.Set(data);
+    }
     void INetworkRunnerCallbacks.OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
     void INetworkRunnerCallbacks.OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
     void INetworkRunnerCallbacks.OnConnectedToServer(NetworkRunner runner) { }
