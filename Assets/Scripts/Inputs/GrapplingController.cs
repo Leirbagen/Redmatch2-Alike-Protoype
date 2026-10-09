@@ -84,7 +84,7 @@ public class GrapplingController : MonoBehaviour
         isHooked = false;
         
     }
-    
+   
     private void DrawRope()
     {
         if(!joint)
