@@ -109,19 +109,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   velocity: 5
-  forceJump: 5
-  isJumping: 0
-  leftGrapple: {fileID: 3846343780227757164}
-  rightGrapple: {fileID: 5306151879006208458}
-  swingControlForce: 8
-  groundCheckDistance: 1.1
   fallDistanceThreshold: 20
   damagePerMeter: 2
   maxFallDamage: 40
-  airControlForce: 4
   playerAudio: {fileID: 8331236191315641181}
   jumpSound: {fileID: 8300000, guid: 6ae21af32ef64904ab02de6755d695cf, type: 3}
   landSound: {fileID: 8300000, guid: b2de1a06aacea2d4e9f5e39349ed5901, type: 3}
+  cameraLook: {fileID: 0}
 --- !u!114 &8785869928844327663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -294,6 +288,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: -3480880722197635930}
+  - {fileID: 8030323658621776697}
   ForceRemoteRenderTimeframe: 0
 --- !u!143 &8729858731972501459
 CharacterController:
