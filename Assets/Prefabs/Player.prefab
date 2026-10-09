@@ -289,6 +289,7 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: -3480880722197635930}
   - {fileID: 8030323658621776697}
+  - {fileID: 6910790806873388749}
   ForceRemoteRenderTimeframe: 0
 --- !u!143 &8729858731972501459
 CharacterController:
@@ -827,7 +828,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sensibility: 150
-  Player: {fileID: 2516003810114803075}
+  playerBody: {fileID: 2516003810114803075}
 --- !u!81 &277959840887105803
 AudioListener:
   m_ObjectHideFlags: 0
