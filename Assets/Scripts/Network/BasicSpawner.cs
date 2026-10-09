@@ -34,6 +34,11 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     }
     void INetworkRunnerCallbacks.OnInput(NetworkRunner runner, NetworkInput input)
     {
+        if (InputController.Instance == null)
+        {
+            Debug.LogWarning("InputController.Instance es null");
+            return;
+        }
         var data = new NetworkInputData();
         float movX = InputController.Instance.GetAxis(InputController.Input.MOVEMENT_X);
         float movY = InputController.Instance.GetAxis(InputController.Input.MOVEMENT_Y);
