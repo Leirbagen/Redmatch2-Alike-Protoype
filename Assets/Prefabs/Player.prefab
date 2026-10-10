@@ -108,7 +108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f93849ec5fe6846489fc00fc70abd657, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocity: 5
+  velocity: 7
   fallDistanceThreshold: 20
   damagePerMeter: 2
   maxFallDamage: 40
@@ -136,7 +136,14 @@ MonoBehaviour:
   aimingPosition: {fileID: 2864313865911490853}
   playerCamera: {fileID: 6650182909990263851}
   aimSpeed: 9
-  availableCategories: []
+  availableCategories:
+  - categoryName: Pistol + SubRiffle
+    weapons:
+    - {fileID: 2835385785719667974, guid: 7fd44739cb9158e418cdb958bc6d7d9d, type: 3}
+    - {fileID: 7457555669967219847, guid: 04e7112568a20c2489ded8e5b4407db8, type: 3}
+  - categoryName: Sniper
+    weapons:
+    - {fileID: -7431386824301002336, guid: 62c5b91b8245aa2419bf231a9f88cfdc, type: 3}
 --- !u!82 &8331236191315641181
 AudioSource:
   m_ObjectHideFlags: 0
@@ -330,11 +337,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _stateAuthorityChangeErrorCorrectionDelta: 0
   gravity: -20
-  jumpImpulse: 8
-  acceleration: 10
+  jumpImpulse: 10
+  acceleration: 13
   braking: 10
-  maxSpeed: 2
-  rotationSpeed: 15
+  maxSpeed: 6
+  rotationSpeed: 0
 --- !u!1 &1682701781649558221
 GameObject:
   m_ObjectHideFlags: 0
