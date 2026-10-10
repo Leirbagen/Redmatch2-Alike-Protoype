@@ -9,10 +9,26 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
     [SerializeField] private int sceneIndex = 2;
     [SerializeField] private NetworkPrefabRef _playerPrefab;
+    [SerializeField] private float sensibility = 200f;
+
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
 
     public static BasicSpawner Instance { get; private set; }
     private NetworkRunner _runner;
+    private Vector2 absoluteCameraLook;
+
+    private void Update()
+    {
+        if (InputController.Instance != null && _runner != null && _runner.ProvideInput)
+        {
+            float lookX = InputController.Instance.GetAxis(InputController.Input.MOUSE_X) * sensibility * Time.deltaTime;
+            float lookY = InputController.Instance.GetAxis(InputController.Input.MOUSE_Y) * sensibility * Time.deltaTime;
+
+            absoluteCameraLook.x += lookX;
+            absoluteCameraLook.y -= lookY;
+            absoluteCameraLook.y = Mathf.Clamp(absoluteCameraLook.y, -80f, 80f);
+        }
+    }
     void INetworkRunnerCallbacks.OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
         if (runner.IsServer)
@@ -43,12 +59,8 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         float movX = InputController.Instance.GetAxis(InputController.Input.MOVEMENT_X);
         float movY = InputController.Instance.GetAxis(InputController.Input.MOVEMENT_Y);
         data.move = new Vector2(movX, movY);
-
-        float lookX = InputController.Instance.GetAxis(InputController.Input.MOUSE_X);
-        float lookY = InputController.Instance.GetAxis(InputController.Input.MOUSE_Y);
-        data.look = new Vector2(lookX, lookY);
-        
-        data.buttons.Set(InputButton.jump, InputController.Instance.GetButton(InputController.Input.JUMP)); //use an index to find which button we are referring to and changes it's state
+        data.look = absoluteCameraLook;
+        data.buttons.Set(InputButton.jump, InputController.Instance.GetButton(InputController.Input.JUMP));
         input.Set(data);
     }
     void INetworkRunnerCallbacks.OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }

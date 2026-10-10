@@ -47,8 +47,12 @@ public class PlayerController : NetworkBehaviour
 
         if (GetInput(out NetworkInputData data))
         {
-            Vector3 moveDirection = (transform.right * data.move.x) + (transform.forward * data.move.y);
+            Quaternion yawRotation = Quaternion.Euler(0f, data.look.x, 0f);
+            Vector3 cameraForward = yawRotation * Vector3.forward;
+            Vector3 cameraRight = yawRotation * Vector3.right;
+            Vector3 moveDirection = (cameraRight * data.move.x) + (cameraForward * data.move.y);
             moveDirection.Normalize();
+
             characterController.Move(moveDirection * velocity * Runner.DeltaTime);
             if (data.buttons.IsSet(InputButton.jump))
             {
