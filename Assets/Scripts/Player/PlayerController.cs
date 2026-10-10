@@ -14,40 +14,38 @@ public class PlayerController : NetworkBehaviour
     public AudioClip jumpSound;
     public AudioClip landSound;
     public GameObject cameraLook;
-
+    public float NetworkYaw { get; set; }
     private void Awake()
     {
         characterController = GetComponent<NetworkCharacterController>();
     }
-
     public override void Spawned()
     {
         base.Spawned();
 
+        Camera camComponent = cameraLook.GetComponent<Camera>();
+        AudioListener audioListener = cameraLook.GetComponent<AudioListener>();
+
         if (HasInputAuthority)
         {
-            if (cameraLook != null)
-            {
-                cameraLook.SetActive(true);
-                cameraLook.tag = "MainCamera";
-            }
+            if (camComponent != null) camComponent.enabled = true;
+            if (audioListener != null) audioListener.enabled = true;
+            cameraLook.tag = "MainCamera";
         }
         else
         {
-            if (cameraLook != null)
-            {
-                cameraLook.SetActive(false);
-            }
+            if (camComponent != null) camComponent.enabled = false;
+            if (audioListener != null) audioListener.enabled = false;
         }
     }
-
     public override void FixedUpdateNetwork()
     {
         base.FixedUpdateNetwork();
 
         if (GetInput(out NetworkInputData data))
         {
-            Quaternion yawRotation = Quaternion.Euler(0f, data.look.x, 0f);
+            NetworkYaw = data.look.x;
+            Quaternion yawRotation = Quaternion.Euler(0f, NetworkYaw, 0f);
             Vector3 cameraForward = yawRotation * Vector3.forward;
             Vector3 cameraRight = yawRotation * Vector3.right;
             Vector3 moveDirection = (cameraRight * data.move.x) + (cameraForward * data.move.y);
@@ -59,10 +57,19 @@ public class PlayerController : NetworkBehaviour
                 if (characterController.Grounded)
                 {
                     characterController.Jump();
-                    if (playerAudio != null && jumpSound != null) playerAudio.PlayOneShot(jumpSound);
+                    if (Runner.IsForward) 
+                    {
+                        if (playerAudio != null && jumpSound != null) 
+                        {
+                            playerAudio.PlayOneShot(jumpSound);
+                        } 
+                    }
+                    
                 }
             }
         }
+
+        transform.rotation = Quaternion.Euler(0f, NetworkYaw, 0f);
 
         if (!characterController.Grounded)
         {
@@ -75,7 +82,13 @@ public class PlayerController : NetworkBehaviour
         {
             if (!wasGrounded)
             {
-                if (playerAudio != null && landSound != null) playerAudio.PlayOneShot(landSound);
+                if (Runner.IsForward) 
+                {
+                    if (playerAudio != null && landSound != null) 
+                    {
+                        playerAudio.PlayOneShot(landSound);
+                    }
+                }  
                 float fallDistance = highestYPosition - transform.position.y;
 
                 if (fallDistance > fallDistanceThreshold)
