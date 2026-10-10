@@ -115,7 +115,7 @@ MonoBehaviour:
   playerAudio: {fileID: 8331236191315641181}
   jumpSound: {fileID: 8300000, guid: 6ae21af32ef64904ab02de6755d695cf, type: 3}
   landSound: {fileID: 8300000, guid: b2de1a06aacea2d4e9f5e39349ed5901, type: 3}
-  cameraLook: {fileID: 0}
+  cameraLook: {fileID: 3744292052338408768}
 --- !u!114 &8785869928844327663
 MonoBehaviour:
   m_ObjectHideFlags: 0
