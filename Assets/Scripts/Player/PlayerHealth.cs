@@ -27,7 +27,14 @@ public class PlayerHealth : NetworkBehaviour, IDamageable
         }
     }
 
-
+    public override void Despawned(NetworkRunner runner, bool hasState)
+    {
+        if(HasInputAuthority)
+        {
+            OnHealthChange?.Invoke(0);
+        }
+    }
+/*
     private void Update()
     {
         if (HasInputAuthority && Input.GetKeyDown(KeyCode.K))
@@ -35,12 +42,19 @@ public class PlayerHealth : NetworkBehaviour, IDamageable
             TakeDamage(9999);
         }
     }
-
+*/
     public override void Render()
     {
-        if(HasInputAuthority)
+        if(!HasInputAuthority)
         {
-            
+            return;
+        }
+        foreach (string change in changeDetector.DetectChanges(this))
+        {
+            if (change == nameof(currentHealth))
+            {
+                OnHealthChange?.Invoke(currentHealth);
+            }
         }
     }
 
