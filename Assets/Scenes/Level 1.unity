@@ -12516,7 +12516,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6643831eccd0467469f06b69f3ae2bf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deathPanel: {fileID: 2065510623}
 --- !u!43 &1344943080
 Mesh:
   m_ObjectHideFlags: 0
@@ -16300,6 +16299,11 @@ MonoBehaviour:
   - {fileID: 1145038513}
   - {fileID: 812681174}
   - {fileID: 905724495}
+  respawnDelay: 3
+  player: {fileID: 1231147898168653364, guid: 6c427748a53a89047a0e5239d06af9f7, type: 3}
+  playerHealth: {fileID: 6964181527821555676, guid: 6c427748a53a89047a0e5239d06af9f7, type: 3}
+  playerController: {fileID: 8030323658621776697, guid: 6c427748a53a89047a0e5239d06af9f7, type: 3}
+  playerCamera: {fileID: 0}
 --- !u!1 &1876788466
 GameObject:
   m_ObjectHideFlags: 0

@@ -3989,6 +3989,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1418667545}
   - component: {fileID: 1418667544}
+  - component: {fileID: 1418667546}
   m_Layer: 0
   m_Name: NetworkController
   m_TagString: Untagged
@@ -4011,6 +4012,7 @@ MonoBehaviour:
   sceneIndex: 2
   _playerPrefab:
     RawGuidValue: 6c427748a53a89047a0e5239d06af9f7
+  sensibility: 200
 --- !u!4 &1418667545
 Transform:
   m_ObjectHideFlags: 0
@@ -4026,6 +4028,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1418667546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1418667543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86a2d861ec2c51b4d9d323e4e6c6d8d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerPrefab:
+    RawGuidValue: 6c427748a53a89047a0e5239d06af9f7
+  respawnDelay: 3
 --- !u!1 &1425868708
 GameObject:
   m_ObjectHideFlags: 0

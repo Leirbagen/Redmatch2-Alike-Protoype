@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerSpawnManager : MonoBehaviour
@@ -9,6 +10,7 @@ public class PlayerSpawnManager : MonoBehaviour
     {
         Instance = this;
     }
+
 
     private void OnDestroy() 
     { 
