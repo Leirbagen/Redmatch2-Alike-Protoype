@@ -2,6 +2,7 @@ using DamageNumbersPro;
 using System;
 using System.Collections;
 using UnityEngine;
+
 public class HitWeapon : WeaponBase
 {
     public bool useScope = false;
@@ -19,7 +20,7 @@ public class HitWeapon : WeaponBase
     public Transform weaponNozzle;
     public GameObject bulletHole;
     public GameObject flashEffect;
-    public string flashPoolID = "ShotFlashEffect"; 
+    public string flashPoolID = "ShotFlashEffect";
     public string bulletHolePoolID = "BulletHole";
     public AudioSource weaponAudio;
     public AudioClip shootSound;
@@ -28,10 +29,6 @@ public class HitWeapon : WeaponBase
 
     public static event Action<bool> OnScopeUI;
 
-    protected override void Start()
-    {
-        base.Start();
-    }
     public override void InjectCamera(Camera cam)
     {
         playerCam = cam;
@@ -45,18 +42,19 @@ public class HitWeapon : WeaponBase
     {
         transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.zero, Time.deltaTime * 5f);
         transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.identity, Time.deltaTime * 5f);
-
-        if (useScope && playerCam != null)
+        if (isLocalPlayer && useScope && playerCam != null)
         {
             float targetZoom = isAiming ? scopedZoom : defaultZoom;
             playerCam.fieldOfView = Mathf.Lerp(playerCam.fieldOfView, targetZoom, Time.deltaTime * 15f);
         }
     }
+
     public override void SetAiming(bool aiming)
     {
         if (isAiming == aiming) return;
         isAiming = aiming;
-        if (useScope)
+
+        if (isLocalPlayer && useScope)
         {
             if (weaponMesh != null)
             {
@@ -67,11 +65,33 @@ public class HitWeapon : WeaponBase
     }
     protected override void ExecuteShoot()
     {
+        if (cameraPlayerTransform == null) return;
+
+        if (Physics.Raycast(cameraPlayerTransform.position, cameraPlayerTransform.forward, out RaycastHit hit, fireRange, hitLayer | wallsHitLayer))
+        {
+            IDamageable damageableObject = hit.collider.GetComponent<IDamageable>();
+            if (damageableObject != null)
+            {
+                if (isServer)
+                {
+                    damageableObject.TakeDamage(weaponDamage);
+                }
+                if (isLocalPlayer && numberPrefab != null)
+                {
+                    numberPrefab.Spawn(hit.point, weaponDamage);
+                }
+            }
+        }
+    }
+
+    public override void PlayNetworkShootEffects()
+    {
         if (weaponAudio != null && shootSound != null)
         {
             weaponAudio.PlayOneShot(shootSound);
         }
-        if (!string.IsNullOrEmpty(flashPoolID) && weaponNozzle != null)
+
+        if (!string.IsNullOrEmpty(flashPoolID) && weaponNozzle != null && PoolManager.Instance != null)
         {
             GameObject flashClone = PoolManager.Instance.Get(flashPoolID, weaponNozzle.position, Quaternion.Euler(weaponNozzle.forward));
             if (flashClone != null)
@@ -81,15 +101,9 @@ public class HitWeapon : WeaponBase
             }
         }
         AddRecoil();
-        if (Physics.Raycast(cameraPlayerTransform.position, cameraPlayerTransform.forward, out RaycastHit hit, fireRange, hitLayer | wallsHitLayer))
+        if (cameraPlayerTransform != null && Physics.Raycast(cameraPlayerTransform.position, cameraPlayerTransform.forward, out RaycastHit hit, fireRange, hitLayer | wallsHitLayer))
         {
-            IDamageable damageableObject = hit.collider.GetComponent<IDamageable>();
-            if (damageableObject != null)
-            {
-                damageableObject.TakeDamage(weaponDamage);
-                numberPrefab.Spawn(hit.point, weaponDamage);
-            }
-            if (!string.IsNullOrEmpty(bulletHolePoolID))
+            if (!string.IsNullOrEmpty(bulletHolePoolID) && PoolManager.Instance != null)
             {
                 GameObject bulletHoleClone = PoolManager.Instance.Get(bulletHolePoolID, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(hit.normal));
                 if (bulletHoleClone != null)
@@ -99,15 +113,17 @@ public class HitWeapon : WeaponBase
             }
         }
     }
+
     private void AddRecoil()
     {
         transform.Rotate(-backForce, 0, 0);
         transform.position -= transform.forward * (backForce / 50f);
     }
+
     private IEnumerator ReleaseAfterDelay(string poolID, GameObject obj, float delay)
     {
         yield return new WaitForSeconds(delay);
-        if (obj != null && obj.activeInHierarchy)
+        if (obj != null && obj.activeInHierarchy && PoolManager.Instance != null)
         {
             PoolManager.Instance.Release(poolID, obj);
         }

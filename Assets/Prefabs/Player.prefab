@@ -144,6 +144,10 @@ MonoBehaviour:
   - categoryName: Sniper
     weapons:
     - {fileID: -7431386824301002336, guid: 62c5b91b8245aa2419bf231a9f88cfdc, type: 3}
+  _SyncedCategoryIndex: -1
+  _activeWeaponIndex: -1
+  _IsAiming:
+    RawValue: 0
 --- !u!82 &8331236191315641181
 AudioSource:
   m_ObjectHideFlags: 0
@@ -296,6 +300,7 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: -3480880722197635930}
   - {fileID: 8030323658621776697}
+  - {fileID: 8785869928844327663}
   - {fileID: 6910790806873388749}
   ForceRemoteRenderTimeframe: 0
 --- !u!143 &8729858731972501459
