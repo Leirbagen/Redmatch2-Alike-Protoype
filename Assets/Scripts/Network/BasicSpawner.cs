@@ -68,7 +68,15 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         input.Set(data);
     }
     void INetworkRunnerCallbacks.OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
-    void INetworkRunnerCallbacks.OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
+    void INetworkRunnerCallbacks.OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
+    {
+        if (runner != null && runner.gameObject != null)
+        {
+            Destroy(runner.gameObject);
+        }
+        _runner = null;
+        _spawnedCharacters.Clear();
+    }
     void INetworkRunnerCallbacks.OnConnectedToServer(NetworkRunner runner) { }
     void INetworkRunnerCallbacks.OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason) { }
     void INetworkRunnerCallbacks.OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }
@@ -98,27 +106,37 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     async void StartGame(GameMode mode, string roomCode)
     {
-        Debug.Log(roomCode);
-        // Create the Fusion runner and let it know that we will be providing user input
-        _runner = gameObject.AddComponent<NetworkRunner>();
-        _runner.ProvideInput = true;
+        if (_runner != null) return;
 
-        // Create the NetworkSceneInfo from the current scene
+        Debug.Log(roomCode);
+        GameObject runnerObj = new GameObject("NetworkRunner_Instance");
+        DontDestroyOnLoad(runnerObj);
+
+        _runner = runnerObj.AddComponent<NetworkRunner>();
+        _runner.ProvideInput = true;
+        _runner.AddCallbacks(this);
         var scene = SceneRef.FromIndex(sceneIndex);
         var sceneInfo = new NetworkSceneInfo();
         if (scene.IsValid)
         {
             sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
         }
-
-        // Start or join (depends on gamemode) a session with a specific name
-        await _runner.StartGame(new StartGameArgs()
+        var result = await _runner.StartGame(new StartGameArgs()
         {
             GameMode = mode,
-            SessionName = roomCode, // the code for the room
+            SessionName = roomCode,
             Scene = scene,
-            SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
+            SceneManager = runnerObj.AddComponent<NetworkSceneManagerDefault>()
         });
+        if (!result.Ok)
+        {
+            Debug.LogWarning($"Couldnt connect to:  '{roomCode}'. Reason: {result.ShutdownReason}");
+            if (runnerObj != null)
+            {
+                Destroy(runnerObj);
+            }
+            _runner = null;
+        }
     }
 
     private string GenerateRoomCode()
