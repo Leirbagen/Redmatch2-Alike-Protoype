@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class DeathMenuUI : MonoBehaviour
 {
+    /*
     public GameObject deathPanel;
 
     private void OnEnable()
@@ -34,4 +35,5 @@ public class DeathMenuUI : MonoBehaviour
         Time.timeScale = 1f;
         SceneManager.LoadScene("TitleScreen");
     }
+    */
 }

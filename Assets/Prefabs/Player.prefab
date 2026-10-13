@@ -280,6 +280,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  _currentHealth: 0
+  _isDead:
+    RawValue: 0
 --- !u!114 &-8251610754344285234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -301,6 +304,7 @@ MonoBehaviour:
   - {fileID: -3480880722197635930}
   - {fileID: 8030323658621776697}
   - {fileID: 8785869928844327663}
+  - {fileID: 6964181527821555676}
   - {fileID: 6910790806873388749}
   ForceRemoteRenderTimeframe: 0
 --- !u!143 &8729858731972501459
