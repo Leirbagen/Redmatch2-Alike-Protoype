@@ -10,5 +10,8 @@ public struct NetworkInputData : INetworkInput
 
 public enum InputButton
 {
-    jump
+    jump,
+    fire,
+    aim,
+    reload
 }

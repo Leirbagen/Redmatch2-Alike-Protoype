@@ -61,6 +61,10 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         data.move = new Vector2(movX, movY);
         data.look = absoluteCameraLook;
         data.buttons.Set(InputButton.jump, InputController.Instance.GetButton(InputController.Input.JUMP));
+        data.buttons.Set(InputButton.fire, InputController.Instance.GetButton(InputController.Input.FIRE_1));
+        data.buttons.Set(InputButton.aim, InputController.Instance.GetButton(InputController.Input.AIM_WEAPON));
+        data.buttons.Set(InputButton.reload, InputController.Instance.GetButton(InputController.Input.RELOAD_WEAPON));
+
         input.Set(data);
     }
     void INetworkRunnerCallbacks.OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }

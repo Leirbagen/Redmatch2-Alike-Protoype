@@ -14,37 +14,58 @@ public abstract class WeaponBase : MonoBehaviour
     protected bool isReloading = false;
     public bool isAutomatic = false;
     public static event Action<int, int> OnAmmoChanged;
+    protected bool isLocalPlayer = false;
+    protected bool isServer = false;
+    protected float nextFireTime = 0f;
 
-    protected virtual void Start()
+    public void SetupNetworkRole(bool localPlayer, bool server)
+    {
+        isLocalPlayer = localPlayer;
+        isServer = server;
+    }
+    protected virtual void Awake()
     {
         currentAmmo = maxAmmo;
     }
     protected virtual void OnEnable()
     {
-        canShoot = true;
+        if (Time.time >= nextFireTime)
+        {
+            canShoot = true;
+        }
         isReloading = false;
     }
-    public virtual void TryShoot()
+    public virtual bool TryShoot()
     {
-        if (canShoot && !isReloading && currentAmmo > 0 && gameObject.activeInHierarchy)
+        if (canShoot && Time.time >= nextFireTime && !isReloading && currentAmmo > 0 && gameObject.activeInHierarchy)
         {
+            nextFireTime = Time.time + fireInterval; 
             StartCoroutine(ShootRoutine());
+            return true;
         }
+        return false;
     }
+
     public virtual void SetAiming(bool aiming) { }
+
     public void RefreshAmmoUI()
     {
-        OnAmmoChanged?.Invoke(currentAmmo, maxAmmo);
+        if (isLocalPlayer)
+        {
+            OnAmmoChanged?.Invoke(currentAmmo, maxAmmo);
+        }
     }
+
     private IEnumerator ShootRoutine()
     {
         canShoot = false;
         currentAmmo--;
-        OnAmmoChanged?.Invoke(currentAmmo, maxAmmo);
+        RefreshAmmoUI();
         ExecuteShoot();
         yield return new WaitForSeconds(fireInterval);
         canShoot = true;
     }
+
     public virtual void StartReload()
     {
         if (!isReloading && currentAmmo < maxAmmo && gameObject.activeInHierarchy)
@@ -52,17 +73,20 @@ public abstract class WeaponBase : MonoBehaviour
             StartCoroutine(ReloadRoutine());
         }
     }
+
     private IEnumerator ReloadRoutine()
     {
         isReloading = true;
         yield return new WaitForSeconds(reloadTime);
         currentAmmo = maxAmmo;
-        OnAmmoChanged?.Invoke(currentAmmo, maxAmmo);
+
+        RefreshAmmoUI();
+
         isReloading = false;
     }
-    protected abstract void ExecuteShoot();
-    public virtual void InjectCamera(Camera cam) 
-    {
 
-    }
+    protected abstract void ExecuteShoot();
+    public abstract void PlayNetworkShootEffects();
+
+    public virtual void InjectCamera(Camera cam) { }
 }
