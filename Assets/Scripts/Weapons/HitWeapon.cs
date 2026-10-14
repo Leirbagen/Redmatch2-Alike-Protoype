@@ -128,7 +128,6 @@ public class HitWeapon : WeaponBase
                     GameObject bulletHoleClone = PoolManager.Instance.Get(bulletHolePoolID, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(hit.normal));
                     if (bulletHoleClone != null)
                     {
-                        // Emparentamos el agujero a la pared para que no flote si la plataforma se mueve
                         bulletHoleClone.transform.SetParent(hit.collider.transform, true);
                         PoolManager.Instance.StartCoroutine(ReleaseAfterDelay(bulletHolePoolID, bulletHoleClone, 4f));
                     }
