@@ -70,9 +70,9 @@ public class HitWeapon : WeaponBase
         if (Physics.Raycast(cameraPlayerTransform.position, cameraPlayerTransform.forward, out RaycastHit hit, fireRange, hitLayer | wallsHitLayer))
         {
             PlayerHealth targetHealth = hit.collider.GetComponentInParent<PlayerHealth>(); 
-            if (targetHealth != null)
+            if (targetHealth != null && targetHealth != GetComponentInParent<PlayerHealth>())
             {
-                if (isLocalPlayer || isServer)
+                if (isServer)
                 {
                     targetHealth.RPC_TakeDamage(weaponDamage);
                 }
