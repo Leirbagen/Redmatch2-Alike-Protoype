@@ -19,6 +19,7 @@ public class PlayerRespawnManager : SimulationBehaviour
 
     private void HandlePlayerDied(PlayerRef player)
     {
+        Debug.Log($"[Respawn] murió {player}, Runner={(Runner != null)}, IsServer={(Runner != null && Runner.IsServer)}");
         if(Runner == null || !Runner.IsServer)
         {
             return;

@@ -135,18 +135,24 @@ MonoBehaviour:
   reloadTime: 1
   weaponIcon: {fileID: 21300000, guid: 9d2966cc9f3662b4dbdb8d126ef1d9e5, type: 3}
   ammoIcon: {fileID: 21300000, guid: 3673edbaf1bb6ef4b8d2e8221e093635, type: 3}
+  isAutomatic: 0
+  useScope: 0
+  scopedZoom: 10
+  weaponMesh: {fileID: 0}
   fireRange: 300
   wallsHitLayer:
     serializedVersion: 2
     m_Bits: 192
   hitLayer:
     serializedVersion: 2
-    m_Bits: 192
+    m_Bits: 320
   backForce: 2
   weaponDamage: 25
   weaponNozzle: {fileID: 5968365681570312229}
   bulletHole: {fileID: 5288464404529657000, guid: 952039bddcdc7334fab29df0f1d73473, type: 3}
   flashEffect: {fileID: 9113582395060495145, guid: e265f8f763b9dd94d8d78df3e18fc24c, type: 3}
+  flashPoolID: ShotFlashEffect
+  bulletHolePoolID: BulletHole
   weaponAudio: {fileID: 873291108491848605}
   shootSound: {fileID: 8300000, guid: cb4951fe6d1c3244ca76b2036410bdbd, type: 3}
   numberPrefab: {fileID: 4888194837565303189, guid: eb5dbf6f58c9c284a902bd85e177c013, type: 3}
