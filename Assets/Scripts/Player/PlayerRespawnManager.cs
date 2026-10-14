@@ -2,10 +2,11 @@ using System.Collections;
 using Fusion;
 using UnityEngine;
 
-public class PlayerRespawnManager : SimulationBehaviour
+public class PlayerRespawnManager : MonoBehaviour //again MonoBehavior because we are going to get the runner manually
 {
     [SerializeField] private NetworkPrefabRef playerPrefab;
     [SerializeField] private float respawnDelay = 3f;
+    private NetworkRunner runner;
 
     private void OnEnable()
     {
@@ -17,30 +18,39 @@ public class PlayerRespawnManager : SimulationBehaviour
         PlayerHealth.OnPlayerDied -= HandlePlayerDied;
     }
 
+    private NetworkRunner GetRunner()
+    {
+        if (runner == null)
+        {
+            runner = FindFirstObjectByType<NetworkRunner>();
+        }
+        return runner;
+    }
+
     private void HandlePlayerDied(PlayerRef player)
     {
-        Debug.Log($"[Respawn] murió {player}, Runner={(Runner != null)}, IsServer={(Runner != null && Runner.IsServer)}");
-        if(Runner == null || !Runner.IsServer)
+        NetworkRunner runner = GetRunner();
+        if(runner == null || !runner.IsServer)
         {
             return;
         }
-        StartCoroutine(RespawnRoutine(player));
+        StartCoroutine(RespawnRoutine(runner, player));
     }
 
-    private IEnumerator RespawnRoutine(PlayerRef player)
+    private IEnumerator RespawnRoutine(NetworkRunner runner, PlayerRef player)
     {
         //deathCamera.Play(playerCamera.position, playerCamera.rotation);
         yield return new WaitForSeconds(respawnDelay);
-        if(IsPlayerConnected(player) == false)
+        if(IsPlayerConnected(runner, player) == false)
         {
             yield break;
         }
-        Respawn(player);
+        Respawn(runner, player);
     }
 
-    private bool IsPlayerConnected(PlayerRef player)
+    private bool IsPlayerConnected(NetworkRunner runner, PlayerRef player)
     {
-        foreach (PlayerRef activePlayer in Runner.ActivePlayers)
+        foreach (PlayerRef activePlayer in runner.ActivePlayers)
         {
             if (activePlayer == player)
             {
@@ -50,11 +60,11 @@ public class PlayerRespawnManager : SimulationBehaviour
         return false;
     }
 
-    private void Respawn(PlayerRef player)
+    private void Respawn(NetworkRunner runner, PlayerRef player)
     {
         Transform point = PlayerSpawnManager.Instance.GetRandomSpawnPoint();
-        NetworkObject playerObj = Runner.Spawn(playerPrefab, point.position, point.rotation, player);
-        Runner.SetPlayerObject(player, playerObj);
+        NetworkObject playerObj = runner.Spawn(playerPrefab, point.position, point.rotation, player);
+        runner.SetPlayerObject(player, playerObj);
         //deathCamera.Stop();
     }
 
