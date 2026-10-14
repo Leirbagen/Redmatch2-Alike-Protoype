@@ -267,6 +267,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: dd257bb068ff00949a9338f9f8e158ac, type: 2}
   - {fileID: 2100000, guid: 1d255524137396948978a21c5315af55, type: 2}
   currentWeaponCategory: 0
+  _SyncedSkinIndex: -1
 --- !u!114 &6964181527821555676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -304,6 +305,7 @@ MonoBehaviour:
   - {fileID: -3480880722197635930}
   - {fileID: 8030323658621776697}
   - {fileID: 8785869928844327663}
+  - {fileID: 5744159364983364505}
   - {fileID: 6964181527821555676}
   - {fileID: 6910790806873388749}
   ForceRemoteRenderTimeframe: 0
