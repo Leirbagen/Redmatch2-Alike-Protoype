@@ -1,27 +1,49 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using Fusion;
 
-public class PlayerDataManager : MonoBehaviour
+public class PlayerDataManager : NetworkBehaviour
 {
-
     public MeshRenderer myPlayerMesh;
     public Material[] availableSkins;
     public int currentWeaponCategory;
-    private void Start()
+
+    [Networked, OnChangedRender(nameof(OnSkinChanged))] 
+    public int SyncedSkinIndex { get; set; } = -1;
+
+    public override void Spawned()
     {
-        LoadCosmetics();
-        LoadWeaponCategory();
-    }
-    private void LoadCosmetics()
-    {
-        int savedSkinIndex = PlayerPrefs.GetInt("SelectedSkin", 0);
-        if (myPlayerMesh != null && availableSkins.Length > savedSkinIndex)
+        base.Spawned();
+
+        if (HasInputAuthority)
         {
-            myPlayerMesh.material = availableSkins[savedSkinIndex];
+            int savedSkinIndex = PlayerPrefs.GetInt("SelectedSkin", 0);
+            currentWeaponCategory = PlayerPrefs.GetInt("SelectedWeaponCategory", 0);
+            RPC_SetSkin(savedSkinIndex);
+        }
+        if (SyncedSkinIndex != -1)
+        {
+            ApplySkinVisuals(SyncedSkinIndex);
         }
     }
-    private void LoadWeaponCategory() 
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    private void RPC_SetSkin(int skinIndex)
     {
-        currentWeaponCategory = PlayerPrefs.GetInt("SelectedWeaponCategory", 0);
+        SyncedSkinIndex = skinIndex; 
+        ApplySkinVisuals(skinIndex); 
+    }
+
+    private void OnSkinChanged()
+    {
+        ApplySkinVisuals(SyncedSkinIndex);
+    }
+
+    private void ApplySkinVisuals(int index)
+    {
+        if (myPlayerMesh != null && availableSkins != null && index >= 0 && index < availableSkins.Length)
+        {
+            myPlayerMesh.material = availableSkins[index];
+        }
     }
 }
