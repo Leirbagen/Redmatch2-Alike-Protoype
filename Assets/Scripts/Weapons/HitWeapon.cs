@@ -103,12 +103,18 @@ public class HitWeapon : WeaponBase
         AddRecoil();
         if (cameraPlayerTransform != null && Physics.Raycast(cameraPlayerTransform.position, cameraPlayerTransform.forward, out RaycastHit hit, fireRange, hitLayer | wallsHitLayer))
         {
-            if (!string.IsNullOrEmpty(bulletHolePoolID) && PoolManager.Instance != null)
+            PlayerHealth hitPlayer = hit.collider.GetComponentInParent<PlayerHealth>();
+            if (hitPlayer == null)
             {
-                GameObject bulletHoleClone = PoolManager.Instance.Get(bulletHolePoolID, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(hit.normal));
-                if (bulletHoleClone != null)
+                if (!string.IsNullOrEmpty(bulletHolePoolID) && PoolManager.Instance != null)
                 {
-                    PoolManager.Instance.StartCoroutine(ReleaseAfterDelay(bulletHolePoolID, bulletHoleClone, 4f));
+                    GameObject bulletHoleClone = PoolManager.Instance.Get(bulletHolePoolID, hit.point + hit.normal * 0.001f, Quaternion.LookRotation(hit.normal));
+                    if (bulletHoleClone != null)
+                    {
+                        // Emparentamos el agujero a la pared para que no flote si la plataforma se mueve
+                        bulletHoleClone.transform.SetParent(hit.collider.transform, true);
+                        PoolManager.Instance.StartCoroutine(ReleaseAfterDelay(bulletHolePoolID, bulletHoleClone, 4f));
+                    }
                 }
             }
         }
