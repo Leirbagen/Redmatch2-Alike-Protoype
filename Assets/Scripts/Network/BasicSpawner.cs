@@ -10,6 +10,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] private int sceneIndex = 2;
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     [SerializeField] private float sensibility = 200f;
+    public string CurrentRoomCode { get; private set; }
 
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
 
@@ -109,6 +110,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         if (_runner != null) return;
 
         Debug.Log(roomCode);
+        CurrentRoomCode = roomCode;
         GameObject runnerObj = new GameObject("NetworkRunner_Instance");
         DontDestroyOnLoad(runnerObj);
 
