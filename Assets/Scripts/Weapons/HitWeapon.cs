@@ -63,14 +63,30 @@ public class HitWeapon : WeaponBase
             OnScopeUI?.Invoke(aiming);
         }
     }
+
+    private int CompareDistance(RaycastHit a, RaycastHit b)
+    {
+        return a.distance.CompareTo(b.distance);
+    }
     protected override void ExecuteShoot()
     {
-        if (cameraPlayerTransform == null) return;
-
-        if (Physics.Raycast(cameraPlayerTransform.position, cameraPlayerTransform.forward, out RaycastHit hit, fireRange, hitLayer | wallsHitLayer))
+        if (cameraPlayerTransform == null)
+        {
+            return;
+        } 
+        PlayerHealth owner = GetComponentInParent<PlayerHealth>();
+        RaycastHit[] hits = Physics.RaycastAll(cameraPlayerTransform.position, cameraPlayerTransform.forward, fireRange, hitLayer | wallsHitLayer, QueryTriggerInteraction.Ignore);
+        // hits its going to storage everything that the raycast has collided with
+        Array.Sort(hits,CompareDistance);
+        //then we sort the array by distance
+        foreach (RaycastHit hit in hits) 
         {
             PlayerHealth targetHealth = hit.collider.GetComponentInParent<PlayerHealth>(); 
-            if (targetHealth != null && targetHealth != GetComponentInParent<PlayerHealth>())
+            if(targetHealth == owner)
+            {
+                continue;
+            }
+            if (targetHealth != null)
             {
                 if (isServer)
                 {
@@ -81,6 +97,7 @@ public class HitWeapon : WeaponBase
                     numberPrefab.Spawn(hit.point, weaponDamage);
                 }
             }
+            break;
         }
     }
 
