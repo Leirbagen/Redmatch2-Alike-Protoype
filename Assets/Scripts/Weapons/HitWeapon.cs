@@ -69,12 +69,12 @@ public class HitWeapon : WeaponBase
 
         if (Physics.Raycast(cameraPlayerTransform.position, cameraPlayerTransform.forward, out RaycastHit hit, fireRange, hitLayer | wallsHitLayer))
         {
-            IDamageable damageableObject = hit.collider.GetComponent<IDamageable>();
-            if (damageableObject != null)
+            PlayerHealth targetHealth = hit.collider.GetComponentInParent<PlayerHealth>(); 
+            if (targetHealth != null)
             {
-                if (isServer)
+                if (isLocalPlayer || isServer)
                 {
-                    damageableObject.TakeDamage(weaponDamage);
+                    targetHealth.RPC_TakeDamage(weaponDamage);
                 }
                 if (isLocalPlayer && numberPrefab != null)
                 {

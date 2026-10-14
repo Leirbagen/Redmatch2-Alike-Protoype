@@ -92,12 +92,14 @@ MonoBehaviour:
     m_Bits: 192
   hitLayer:
     serializedVersion: 2
-    m_Bits: 192
+    m_Bits: 320
   backForce: 2.5
   weaponDamage: 35
   weaponNozzle: {fileID: 7994762743437771018}
   bulletHole: {fileID: 5288464404529657000, guid: 952039bddcdc7334fab29df0f1d73473, type: 3}
   flashEffect: {fileID: 9113582395060495145, guid: e265f8f763b9dd94d8d78df3e18fc24c, type: 3}
+  flashPoolID: ShotFlashEffect
+  bulletHolePoolID: BulletHole
   weaponAudio: {fileID: 9064482841751357283}
   shootSound: {fileID: 8300000, guid: fb14e80665173584e83f471b1b5b5733, type: 3}
   numberPrefab: {fileID: 4888194837565303189, guid: eb5dbf6f58c9c284a902bd85e177c013, type: 3}

@@ -1,7 +1,6 @@
 using Fusion;
 using UnityEngine;
 using System;
-using Unity.VisualScripting;
 
 public class PlayerHealth : NetworkBehaviour, IDamageable
 {
@@ -34,7 +33,7 @@ public class PlayerHealth : NetworkBehaviour, IDamageable
             OnHealthChange?.Invoke(0);
         }
     }
-/*
+
     private void Update()
     {
         if (HasInputAuthority && Input.GetKeyDown(KeyCode.K))
@@ -42,7 +41,7 @@ public class PlayerHealth : NetworkBehaviour, IDamageable
             TakeDamage(9999);
         }
     }
-*/
+
     public override void Render()
     {
         if(!HasInputAuthority)
@@ -76,6 +75,12 @@ public class PlayerHealth : NetworkBehaviour, IDamageable
             OnPlayerDied?.Invoke(Object.InputAuthority);
             Runner.Despawn(Object);
         }
+    }
+
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_TakeDamage(int damage)
+    {
+        TakeDamage(damage);
     }
 
 }
