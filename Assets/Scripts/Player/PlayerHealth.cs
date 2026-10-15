@@ -10,6 +10,7 @@ public class PlayerHealth : NetworkBehaviour, IDamageable
 
     public static event Action<int> OnHealthChange;
     public static event Action<PlayerRef> OnPlayerDied;
+    [SerializeField] private Transform cameraTransform;
     private ChangeDetector changeDetector;
 
     public override void Spawned()
@@ -22,6 +23,7 @@ public class PlayerHealth : NetworkBehaviour, IDamageable
         }
         if (HasInputAuthority)
         {
+            PlayerDeathCamera.Instance?.Stop();
             OnHealthChange?.Invoke(currentHealth);
         }
     }
@@ -31,6 +33,10 @@ public class PlayerHealth : NetworkBehaviour, IDamageable
         if(HasInputAuthority)
         {
             OnHealthChange?.Invoke(0);
+            if(hasState && cameraTransform != null) //hasState will check why the object has been despawned, if it was natural or because the runner went off
+            {
+                PlayerDeathCamera.Instance?.Play(cameraTransform.position, cameraTransform.rotation);
+            }
         }
     }
 
