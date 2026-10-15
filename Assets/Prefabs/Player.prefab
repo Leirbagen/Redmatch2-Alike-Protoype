@@ -205,7 +205,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -285,6 +285,12 @@ MonoBehaviour:
   _isDead:
     RawValue: 0
   cameraTransform: {fileID: 7486327104575030368}
+  playerFractured: {fileID: 5119325912710982520, guid: 22b0438f9991cf147964ec7a0032ff18, type: 3}
+  healthAudioSource: {fileID: 8331236191315641181}
+  painSounds:
+  - {fileID: 8300000, guid: 4ad266683ada7d849980131a5a81952c, type: 3}
+  - {fileID: 8300000, guid: b353d5c10236e9d48989b3747e11e9ab, type: 3}
+  - {fileID: 8300000, guid: 3d3b547dbda1f8248b9a6db8abae36c1, type: 3}
 --- !u!114 &-8251610754344285234
 MonoBehaviour:
   m_ObjectHideFlags: 0
