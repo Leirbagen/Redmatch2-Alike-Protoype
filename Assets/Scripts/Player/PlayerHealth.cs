@@ -12,6 +12,9 @@ public class PlayerHealth : NetworkBehaviour, IDamageable
     public static event Action<PlayerRef> OnPlayerDied;
     [SerializeField] private Transform cameraTransform;
     private ChangeDetector changeDetector;
+    public AudioSource healthAudioSource;
+    public AudioClip[] painSounds; 
+    private int previousHealth;
 
     public override void Spawned()
     {
@@ -21,6 +24,7 @@ public class PlayerHealth : NetworkBehaviour, IDamageable
             currentHealth = maxHealth;
             isDead = false;
         }
+        previousHealth = currentHealth;
         if (HasInputAuthority)
         {
             PlayerDeathCamera.Instance?.Stop();
@@ -50,16 +54,24 @@ public class PlayerHealth : NetworkBehaviour, IDamageable
 
     public override void Render()
     {
-        if(!HasInputAuthority)
-        {
-            return;
-        }
         foreach (string change in changeDetector.DetectChanges(this))
         {
             if (change == nameof(currentHealth))
             {
+                if (currentHealth < previousHealth && !isDead)
+                {
+                    if (healthAudioSource != null && painSounds.Length > 0)
+                    {
+                        AudioClip randomPain = painSounds[UnityEngine.Random.Range(0, painSounds.Length)];
+                        healthAudioSource.PlayOneShot(randomPain);
+                    }
+                }
+            }
+            if (HasInputAuthority)
+            {
                 OnHealthChange?.Invoke(currentHealth);
             }
+            previousHealth = currentHealth;
         }
     }
 
