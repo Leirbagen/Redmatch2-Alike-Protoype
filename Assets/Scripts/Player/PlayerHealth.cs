@@ -38,12 +38,18 @@ public class PlayerHealth : NetworkBehaviour, IDamageable
         if(HasInputAuthority)
         {
             OnHealthChange?.Invoke(0);
-            SpawnFracturedPlayer();
-            if(hasState && cameraTransform != null) //hasState will check why the object has been despawned, if it was natural or because the runner went off
-            {
-                PlayerDeathCamera.Instance?.Play(cameraTransform.position, cameraTransform.rotation);
-            }
         }
+        if(!hasState)
+        {
+            return;
+        }
+        SpawnFracturedPlayer();
+
+        if(HasInputAuthority && cameraTransform != null) //hasState will check why the object has been despawned, if it was natural or because the runner went off
+        {
+            PlayerDeathCamera.Instance?.Play(cameraTransform.position, cameraTransform.rotation);
+        }
+        
     }
 
     private void Update()
