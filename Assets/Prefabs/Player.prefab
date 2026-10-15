@@ -285,6 +285,9 @@ MonoBehaviour:
   _isDead:
     RawValue: 0
   cameraTransform: {fileID: 7486327104575030368}
+  playerFractured: {fileID: 5119325912710982520, guid: 22b0438f9991cf147964ec7a0032ff18, type: 3}
+  healthAudioSource: {fileID: 0}
+  painSounds: []
 --- !u!114 &-8251610754344285234
 MonoBehaviour:
   m_ObjectHideFlags: 0

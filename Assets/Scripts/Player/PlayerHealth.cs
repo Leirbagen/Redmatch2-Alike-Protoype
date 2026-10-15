@@ -11,6 +11,7 @@ public class PlayerHealth : NetworkBehaviour, IDamageable
     public static event Action<int> OnHealthChange;
     public static event Action<PlayerRef> OnPlayerDied;
     [SerializeField] private Transform cameraTransform;
+    [SerializeField] private GameObject playerFractured;
     private ChangeDetector changeDetector;
     public AudioSource healthAudioSource;
     public AudioClip[] painSounds; 
@@ -37,6 +38,7 @@ public class PlayerHealth : NetworkBehaviour, IDamageable
         if(HasInputAuthority)
         {
             OnHealthChange?.Invoke(0);
+            SpawnFracturedPlayer();
             if(hasState && cameraTransform != null) //hasState will check why the object has been despawned, if it was natural or because the runner went off
             {
                 PlayerDeathCamera.Instance?.Play(cameraTransform.position, cameraTransform.rotation);
@@ -99,6 +101,15 @@ public class PlayerHealth : NetworkBehaviour, IDamageable
     public void RPC_TakeDamage(int damage)
     {
         TakeDamage(damage);
+    }
+
+    private void SpawnFracturedPlayer()
+    {
+        if (playerFractured != null)
+        {
+            GameObject corpseClone = Instantiate(playerFractured, transform.position, transform.rotation);
+            Destroy(corpseClone, 5f);
+        }
     }
 
 }
