@@ -284,6 +284,7 @@ MonoBehaviour:
   _currentHealth: 0
   _isDead:
     RawValue: 0
+  cameraTransform: {fileID: 7486327104575030368}
 --- !u!114 &-8251610754344285234
 MonoBehaviour:
   m_ObjectHideFlags: 0
