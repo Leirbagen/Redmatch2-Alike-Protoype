@@ -76,9 +76,7 @@ public class HitWeapon : WeaponBase
         } 
         PlayerHealth owner = GetComponentInParent<PlayerHealth>();
         RaycastHit[] hits = Physics.RaycastAll(cameraPlayerTransform.position, cameraPlayerTransform.forward, fireRange, hitLayer | wallsHitLayer, QueryTriggerInteraction.Ignore);
-        // hits its going to storage everything that the raycast has collided with
         Array.Sort(hits,CompareDistance);
-        //then we sort the array by distance
         foreach (RaycastHit hit in hits) 
         {
             PlayerHealth targetHealth = hit.collider.GetComponentInParent<PlayerHealth>(); 
@@ -90,7 +88,7 @@ public class HitWeapon : WeaponBase
             {
                 if (isServer)
                 {
-                    targetHealth.RPC_TakeDamage(weaponDamage);
+                    targetHealth.RPC_TakeDamage(weaponDamage, weaponOwner);
                 }
                 if (isLocalPlayer && numberPrefab != null)
                 {
@@ -135,13 +133,11 @@ public class HitWeapon : WeaponBase
             }
         }
     }
-
     private void AddRecoil()
     {
         transform.Rotate(-backForce, 0, 0);
         transform.position -= transform.forward * (backForce / 50f);
     }
-
     private IEnumerator ReleaseAfterDelay(string poolID, GameObject obj, float delay)
     {
         yield return new WaitForSeconds(delay);

@@ -85,30 +85,34 @@ public class PlayerHealth : NetworkBehaviour, IDamageable
 
     public void TakeDamage(int damageInt)
     {
-        if(!HasStateAuthority)
-        {
-            return;
-        }
-        if(isDead)
-        {
-            return;
-        }
+        TakeDamage(damageInt, PlayerRef.None);
+    }
+    public void TakeDamage(int damageInt, PlayerRef killer)
+    {
+        if (!HasStateAuthority || isDead) return;
+
         currentHealth -= damageInt;
         currentHealth = Mathf.Max(currentHealth, 0);
+
         if (currentHealth <= 0)
         {
             isDead = true;
+
+            if (LevelManager.Instance != null && killer.IsValid)
+            {
+                LevelManager.Instance.AddKill(killer);
+            }
+
             OnPlayerDied?.Invoke(Object.InputAuthority);
             Runner.Despawn(Object);
         }
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_TakeDamage(int damage)
+    public void RPC_TakeDamage(int damage, PlayerRef killer)
     {
-        TakeDamage(damage);
+        TakeDamage(damage, killer);
     }
-
     private void SpawnFracturedPlayer()
     {
         if (playerFractured != null)
