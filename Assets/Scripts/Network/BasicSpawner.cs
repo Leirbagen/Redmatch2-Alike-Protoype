@@ -105,7 +105,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         DontDestroyOnLoad(gameObject);
     }
 
-    async void StartGame(GameMode mode, string roomCode)
+    async void StartGame(GameMode mode, string roomCode, int sceneToLoad)
     {
         if (_runner != null) return;
 
@@ -117,7 +117,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         _runner = runnerObj.AddComponent<NetworkRunner>();
         _runner.ProvideInput = true;
         _runner.AddCallbacks(this);
-        var scene = SceneRef.FromIndex(sceneIndex);
+        var scene = SceneRef.FromIndex(sceneToLoad);
         var sceneInfo = new NetworkSceneInfo();
         if (scene.IsValid)
         {
@@ -157,15 +157,15 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         return code;
     }
 
-    public void HostGame()
+    public void HostGame(int sceneToLoad)
     {
         string code = GenerateRoomCode();
-        StartGame(GameMode.Host, code);
+        StartGame(GameMode.Host, code, sceneToLoad);
     }
 
     public void JoinGame(string code)
     {
-        StartGame(GameMode.Client, code);
+        StartGame(GameMode.Client, code, sceneIndex);
     }
 
     

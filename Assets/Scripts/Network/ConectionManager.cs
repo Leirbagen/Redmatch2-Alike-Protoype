@@ -5,9 +5,9 @@ public class ConectionManager : MonoBehaviour
 {
     [SerializeField] private TMP_InputField codeInput;
     
-    public void Host()
+    public void Host(int sceneIndex)
     {
-        BasicSpawner.Instance.HostGame();
+        BasicSpawner.Instance.HostGame(sceneIndex);
     }
 
     public void Join()
