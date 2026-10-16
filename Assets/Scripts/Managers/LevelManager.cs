@@ -1,64 +1,84 @@
+using Fusion;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public class LevelManager : MonoBehaviour
+public class LevelManager : NetworkBehaviour
 {
-    public int totalEnemiesToKill;
-    public float timeLimitSeconds;
-    public string nextLevelName;
+    public static LevelManager Instance { get; private set; }
+
+    public float timeLimitSeconds = 120f;
+
+    [Networked] public TickTimer MatchTimer { get; set; }
+
+    [Networked, Capacity(8)]
+    public NetworkDictionary<PlayerRef, int> PlayerKills => default;
+    [Networked, OnChangedRender(nameof(OnMatchOverChanged))]
+    public NetworkBool IsMatchOver { get; set; }
+
+    [Networked] public PlayerRef WinnerPlayer { get; set; }
+    [Networked] public int WinnerKillsAmount { get; set; }
 
     public static event Action<float> OnTimeUpdated;
-    public static event Action OnTimeOutLost;
+    public static event Action<string, int> OnMatchEnded;
 
-    private int currentKills = 0;
-    private float currentTime;
-    private bool isLevelActive = true;
-    private void OnEnable() 
+    private void Awake()
     {
-        EnemyController.OnEnemyDefeated += HandleEnemyKill;
-    }
-    private void OnDisable() 
-    {
-        EnemyController.OnEnemyDefeated -= HandleEnemyKill;
-    } 
-
-    private void Start()
-    {
-        currentTime = timeLimitSeconds;
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
     }
 
-    private void Update()
+    public override void FixedUpdateNetwork()
     {
-        if (!isLevelActive || Time.timeScale == 0f) return;
-        currentTime -= Time.deltaTime;
-        OnTimeUpdated?.Invoke(currentTime);
-        if (currentTime <= 0)
+        if (IsMatchOver) return;
+        if (HasStateAuthority && !MatchTimer.IsRunning)
         {
-            TriggerDefeat();
+            MatchTimer = TickTimer.CreateFromSeconds(Runner, timeLimitSeconds);
+        }
+        if (MatchTimer.IsRunning)
+        {
+            float? remaining = MatchTimer.RemainingTime(Runner);
+            if (remaining.HasValue)
+            {
+                OnTimeUpdated?.Invoke(remaining.Value);
+            }
+        }
+        if (HasStateAuthority && MatchTimer.IsRunning && MatchTimer.Expired(Runner))
+        {
+            CalculateWinner();
         }
     }
 
-    private void HandleEnemyKill()
+    public void AddKill(PlayerRef killer)
     {
-        if (!isLevelActive) return;
+        if (!HasStateAuthority || IsMatchOver || !killer.IsValid) return;
 
-        currentKills++;
-        if (currentKills >= totalEnemiesToKill)
+        int currentKills = PlayerKills.ContainsKey(killer) ? PlayerKills.Get(killer) : 0;
+        PlayerKills.Set(killer, currentKills + 1);
+    }
+
+    private void CalculateWinner()
+    {
+        PlayerRef winner = PlayerRef.None;
+        int maxKills = 0; 
+
+        foreach (var kvp in PlayerKills)
         {
-            TriggerVictory();
+            if (kvp.Value > maxKills)
+            {
+                maxKills = kvp.Value;
+                winner = kvp.Key;
+            }
         }
+
+        WinnerPlayer = winner;
+        WinnerKillsAmount = maxKills;
+        IsMatchOver = true;
     }
 
-    private void TriggerVictory()
+    private void OnMatchOverChanged()
     {
-        isLevelActive = false;
-        SceneManager.LoadScene(nextLevelName);
-    }
-
-    private void TriggerDefeat()
-    {
-        isLevelActive = false;
-        OnTimeOutLost?.Invoke();
+        string winnerName = WinnerPlayer.IsValid ? $"Player {WinnerPlayer.PlayerId}" : "Empate / Nadie";
+        OnMatchEnded?.Invoke(winnerName, WinnerKillsAmount);
     }
 }

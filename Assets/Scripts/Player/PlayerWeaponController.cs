@@ -225,7 +225,7 @@ public class PlayerWeaponController : NetworkBehaviour
                 WeaponBase weaponClone = Instantiate(p_weaponPrefab, weaponParentSocket);
                 weaponClone.gameObject.SetActive(false);
                 weaponClone.InjectCamera(playerCamera);
-                weaponClone.SetupNetworkRole(HasInputAuthority, HasStateAuthority);
+                weaponClone.SetupNetworkRole(HasInputAuthority, HasStateAuthority, Object.InputAuthority);
                 weaponSlots[i] = weaponClone;
                 if (!HasInputAuthority)
                 {

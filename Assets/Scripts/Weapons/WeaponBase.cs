@@ -1,6 +1,7 @@
-using UnityEngine;
-using System.Collections;
+using Fusion;
 using System;
+using System.Collections;
+using UnityEngine;
 
 public abstract class WeaponBase : MonoBehaviour
 {
@@ -17,11 +18,13 @@ public abstract class WeaponBase : MonoBehaviour
     protected bool isLocalPlayer = false;
     protected bool isServer = false;
     protected float nextFireTime = 0f;
+    protected PlayerRef weaponOwner;
 
-    public void SetupNetworkRole(bool localPlayer, bool server)
+    public void SetupNetworkRole(bool localPlayer, bool server, PlayerRef owner)
     {
         isLocalPlayer = localPlayer;
         isServer = server;
+        weaponOwner = owner;
     }
     protected virtual void Awake()
     {
@@ -45,9 +48,7 @@ public abstract class WeaponBase : MonoBehaviour
         }
         return false;
     }
-
     public virtual void SetAiming(bool aiming) { }
-
     public void RefreshAmmoUI()
     {
         if (isLocalPlayer)
@@ -55,7 +56,6 @@ public abstract class WeaponBase : MonoBehaviour
             OnAmmoChanged?.Invoke(currentAmmo, maxAmmo);
         }
     }
-
     private IEnumerator ShootRoutine()
     {
         canShoot = false;
@@ -65,7 +65,6 @@ public abstract class WeaponBase : MonoBehaviour
         yield return new WaitForSeconds(fireInterval);
         canShoot = true;
     }
-
     public virtual void StartReload()
     {
         if (!isReloading && currentAmmo < maxAmmo && gameObject.activeInHierarchy)
@@ -73,7 +72,6 @@ public abstract class WeaponBase : MonoBehaviour
             StartCoroutine(ReloadRoutine());
         }
     }
-
     private IEnumerator ReloadRoutine()
     {
         isReloading = true;
@@ -84,9 +82,7 @@ public abstract class WeaponBase : MonoBehaviour
 
         isReloading = false;
     }
-
     protected abstract void ExecuteShoot();
     public abstract void PlayNetworkShootEffects();
-
     public virtual void InjectCamera(Camera cam) { }
 }
