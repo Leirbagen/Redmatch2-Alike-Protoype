@@ -1,18 +1,22 @@
 using Fusion;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement; 
 
 public class LevelManager : NetworkBehaviour
 {
     public static LevelManager Instance { get; private set; }
 
     public float timeLimitSeconds = 120f;
+    public string mainMenuSceneName = "TitleScreen"; 
 
     [Networked] public TickTimer MatchTimer { get; set; }
 
     [Networked, Capacity(8)]
     public NetworkDictionary<PlayerRef, int> PlayerKills => default;
+
     [Networked, OnChangedRender(nameof(OnMatchOverChanged))]
     public NetworkBool IsMatchOver { get; set; }
 
@@ -31,10 +35,22 @@ public class LevelManager : NetworkBehaviour
     public override void FixedUpdateNetwork()
     {
         if (IsMatchOver) return;
+
         if (HasStateAuthority && !MatchTimer.IsRunning)
         {
             MatchTimer = TickTimer.CreateFromSeconds(Runner, timeLimitSeconds);
         }
+
+        if (HasStateAuthority && MatchTimer.IsRunning && MatchTimer.Expired(Runner))
+        {
+            CalculateWinner();
+        }
+    }
+
+    public override void Render()
+    {
+        if (IsMatchOver) return;
+
         if (MatchTimer.IsRunning)
         {
             float? remaining = MatchTimer.RemainingTime(Runner);
@@ -42,10 +58,6 @@ public class LevelManager : NetworkBehaviour
             {
                 OnTimeUpdated?.Invoke(remaining.Value);
             }
-        }
-        if (HasStateAuthority && MatchTimer.IsRunning && MatchTimer.Expired(Runner))
-        {
-            CalculateWinner();
         }
     }
 
@@ -60,7 +72,7 @@ public class LevelManager : NetworkBehaviour
     private void CalculateWinner()
     {
         PlayerRef winner = PlayerRef.None;
-        int maxKills = 0; 
+        int maxKills = 0;
 
         foreach (var kvp in PlayerKills)
         {
@@ -78,7 +90,21 @@ public class LevelManager : NetworkBehaviour
 
     private void OnMatchOverChanged()
     {
-        string winnerName = WinnerPlayer.IsValid ? $"Player {WinnerPlayer.PlayerId}" : "Empate / Nadie";
+        string winnerName = WinnerPlayer.IsValid ? $"Player {WinnerPlayer.PlayerId}" : "No one";
         OnMatchEnded?.Invoke(winnerName, WinnerKillsAmount);
+
+        StartCoroutine(ReturnToMenuRoutine());
+    }
+
+    private IEnumerator ReturnToMenuRoutine()
+    {
+        yield return new WaitForSeconds(15f);
+        if (Runner != null)
+        {
+            Runner.Shutdown();
+        }
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        SceneManager.LoadScene(mainMenuSceneName);
     }
 }
