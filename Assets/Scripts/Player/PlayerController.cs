@@ -50,27 +50,35 @@ public class PlayerController : NetworkBehaviour
             Vector3 cameraRight = yawRotation * Vector3.right;
             Vector3 moveDirection = (cameraRight * data.move.x) + (cameraForward * data.move.y);
             moveDirection.Normalize();
+            DualGrapplingController grappler = GetComponent<DualGrapplingController>();
+            bool isGrappling = grappler != null && (grappler.IsLeftHooked || grappler.IsRightHooked);
 
-            characterController.Move(moveDirection * velocity * Runner.DeltaTime);
+            if (isGrappling)
+            {
+                characterController.Move(Vector3.zero);
+            }
+            else
+            {
+                characterController.Move(moveDirection * velocity * Runner.DeltaTime);
+            }
+
             if (data.buttons.IsSet(InputButton.jump))
             {
                 if (characterController.Grounded)
                 {
                     characterController.Jump();
-                    if (Runner.IsForward) 
+                    if (Runner.IsForward)
                     {
-                        if (playerAudio != null && jumpSound != null) 
+                        if (playerAudio != null && jumpSound != null)
                         {
                             playerAudio.PlayOneShot(jumpSound);
-                        } 
+                        }
                     }
-                    
                 }
             }
         }
 
         transform.rotation = Quaternion.Euler(0f, NetworkYaw, 0f);
-
         if (!characterController.Grounded)
         {
             if (transform.position.y > highestYPosition)
@@ -82,13 +90,13 @@ public class PlayerController : NetworkBehaviour
         {
             if (!wasGrounded)
             {
-                if (Runner.IsForward) 
+                if (Runner.IsForward)
                 {
-                    if (playerAudio != null && landSound != null) 
+                    if (playerAudio != null && landSound != null)
                     {
                         playerAudio.PlayOneShot(landSound);
                     }
-                }  
+                }
                 float fallDistance = highestYPosition - transform.position.y;
 
                 if (fallDistance > fallDistanceThreshold)

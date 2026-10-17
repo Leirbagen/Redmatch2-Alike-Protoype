@@ -124,7 +124,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         var sceneInfo = new NetworkSceneInfo();
         if (scene.IsValid)
         {
-            sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
+            sceneInfo.AddSceneRef(scene, LoadSceneMode.Single);
         }
         var result = await _runner.StartGame(new StartGameArgs()
         {
