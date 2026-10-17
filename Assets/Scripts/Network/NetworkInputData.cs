@@ -13,5 +13,7 @@ public enum InputButton
     jump,
     fire,
     aim,
-    reload
+    reload,
+    grappleLeft,
+    grappleRight
 }
