@@ -77,6 +77,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         }
         _runner = null;
         _spawnedCharacters.Clear();
+        InputController.Instance.ChangeGameMode(InputMode.Menu);
     }
     void INetworkRunnerCallbacks.OnConnectedToServer(NetworkRunner runner) { }
     void INetworkRunnerCallbacks.OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason) { }
@@ -139,6 +140,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
             }
             _runner = null;
         }
+        InputController.Instance.ChangeGameMode(InputMode.Gameplay);
     }
 
     private string GenerateRoomCode()

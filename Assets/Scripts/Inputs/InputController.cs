@@ -1,11 +1,23 @@
 using UnityEngine;
 using Rewired;
+using System.Collections.Generic;
 
+public enum InputMode {
+    Gameplay,
+    Menu
+}
 
 public class InputController : MonoBehaviour
 {
+    public int playerId = 0;
     public static InputController Instance { get; private set; }
-    [SerializeField] private Player input;
+    [SerializeField] private InputMode startingMode = InputMode.Menu;
+    private InputMode currentGameMode;
+    private Player player;
+    static Dictionary<InputMode, string> gameModeToMapCategory = new Dictionary<InputMode, string>() {
+        { InputMode.Gameplay, "inGame" },
+        { InputMode.Menu, "inMenu" },
+    };
 
     private void Awake()
     {
@@ -15,23 +27,54 @@ public class InputController : MonoBehaviour
             return;
         }
         Instance = this;
-        input = ReInput.players.GetPlayer(0);
+        player = ReInput.players.GetPlayer(playerId);
+        player.controllers.ControllerAddedEvent += OnControllerAdded;
+        ChangeGameMode(startingMode);
     }
+
+    void OnDestroy() {
+        if (Instance != this)
+        {
+            return; 
+        } 
+        if (ReInput.isReady && player != null)
+        {
+            player.controllers.ControllerAddedEvent -= OnControllerAdded;
+        }
+    }
+
+    public void ChangeGameMode(InputMode mode) {
+        currentGameMode = mode; // store the new game mode
+        SetControllerMapsForCurrentGameMode(); // enable the correct Controller Maps for the game mode
+    }
+
+    void OnControllerAdded(ControllerAssignmentChangedEventArgs args) {
+        SetControllerMapsForCurrentGameMode();
+    }
+
+    void SetControllerMapsForCurrentGameMode() {
+        // Disable all controller maps first for all controllers of all types
+        player.controllers.maps.SetAllMapsEnabled(false);
+
+        // Enable maps for the current game mode for all controlllers of all types
+        player.controllers.maps.SetMapsEnabled(true, gameModeToMapCategory[currentGameMode]);
+    }
+
     public float GetAxis(int actionID) 
     {
-        return input.GetAxis(actionID);
+        return player.GetAxis(actionID);
     }
     public bool GetButtonDown(int actionID) 
     {
-        return input.GetButtonDown(actionID);
+        return player.GetButtonDown(actionID);
     }
     public bool GetButton(int actionID)
     {
-        return input.GetButton(actionID);
+        return player.GetButton(actionID);
     }
     public bool GetMouseButton(int actionID) 
     {
-        return input.GetButtonDown(actionID);
+        return player.GetButtonDown(actionID);
     }
     public static class Input 
     {
@@ -46,5 +89,10 @@ public class InputController : MonoBehaviour
         public const int RELOAD_WEAPON = 11;
         public const int SCROLL_WHEEL = 12;
         public const int AIM_WEAPON = 13;
+        ///////MENU////////
+        public const int MENUVERTICAL = 14;
+        public const int MENUHORIZONTAL = 15;
+        public const int MENUSUBMIT = 16;
+        public const int MENUCANCEL = 17;
     }
 }
