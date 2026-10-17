@@ -65,6 +65,8 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         data.buttons.Set(InputButton.fire, InputController.Instance.GetButton(InputController.Input.FIRE_1));
         data.buttons.Set(InputButton.aim, InputController.Instance.GetButton(InputController.Input.AIM_WEAPON));
         data.buttons.Set(InputButton.reload, InputController.Instance.GetButton(InputController.Input.RELOAD_WEAPON));
+        data.buttons.Set(InputButton.grappleLeft, InputController.Instance.GetButton(InputController.Input.GRAPPLE_LEFT));
+        data.buttons.Set(InputButton.grappleRight, InputController.Instance.GetButton(InputController.Input.GRAPPLE_RIGHT));
 
         input.Set(data);
     }

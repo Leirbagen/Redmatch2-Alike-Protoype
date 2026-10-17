@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: -8251610754344285234}
   - component: {fileID: 8729858731972501459}
   - component: {fileID: -3480880722197635930}
+  - component: {fileID: 8950084615000821766}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -314,6 +315,7 @@ MonoBehaviour:
   - {fileID: 8785869928844327663}
   - {fileID: 5744159364983364505}
   - {fileID: 6964181527821555676}
+  - {fileID: 8950084615000821766}
   - {fileID: 6910790806873388749}
   ForceRemoteRenderTimeframe: 0
 --- !u!143 &8729858731972501459
@@ -360,6 +362,38 @@ MonoBehaviour:
   braking: 10
   maxSpeed: 6
   rotationSpeed: 0
+--- !u!114 &8950084615000821766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1231147898168653364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6c4a83e80c599744a2a29a956f3796e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxDistance: 100
+  grappleableLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  cameraLook: {fileID: 7486327104575030368}
+  pullForce: 30
+  swingSpeedBoost: 7
+  leftRopeOut: {fileID: 105785044051419094}
+  leftLineRenderer: {fileID: 1169221830741927202}
+  leftAudio: {fileID: 2550085836260442178}
+  rightRopeOut: {fileID: 2107935497729131858}
+  rightLineRenderer: {fileID: 36876234794876044}
+  rightAudio: {fileID: 6215381003327968133}
+  shootSound: {fileID: 8300000, guid: dd0cab94723e7864dbee6489165fe4c1, type: 3}
+  _IsLeftHooked:
+    RawValue: 0
+  _LeftGrapplePoint: {x: 0, y: 0, z: 0}
+  _IsRightHooked:
+    RawValue: 0
+  _RightGrapplePoint: {x: 0, y: 0, z: 0}
 --- !u!1 &1682701781649558221
 GameObject:
   m_ObjectHideFlags: 0
@@ -371,9 +405,9 @@ GameObject:
   - component: {fileID: 8959985778465158939}
   - component: {fileID: 3146127209981724765}
   - component: {fileID: 8024426166276542602}
-  - component: {fileID: 3846343780227757164}
   - component: {fileID: 1169221830741927202}
   - component: {fileID: 2550085836260442178}
+  - component: {fileID: 8161381493735019321}
   m_Layer: 0
   m_Name: LeftGrap
   m_TagString: Untagged
@@ -450,28 +484,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &3846343780227757164
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1682701781649558221}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6c4a83e80c599744a2a29a956f3796e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cameraLook: {fileID: 7486327104575030368}
-  ropeOut: {fileID: 105785044051419094}
-  maxDistance: 100
-  grappleableLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  player: {fileID: 2516003810114803075}
-  isHooked: 0
-  audioSource: {fileID: 2550085836260442178}
-  shootSound: {fileID: 8300000, guid: dd0cab94723e7864dbee6489165fe4c1, type: 3}
 --- !u!120 &1169221830741927202
 LineRenderer:
   serializedVersion: 2
@@ -496,7 +508,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ca1122763da38c94b8375635418df456, type: 2}
+  - {fileID: 2100000, guid: ff8b465e3df4f0b4ea52799d2edbec38, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -571,7 +583,7 @@ LineRenderer:
     numCornerVertices: 0
     numCapVertices: 0
     alignment: 0
-    textureMode: 0
+    textureMode: 1
     textureScale: {x: 1, y: 1}
     shadowBias: 0.5
     generateLightingData: 0
@@ -676,6 +688,31 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!143 &8161381493735019321
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1682701781649558221}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &3134907688988612804
 GameObject:
   m_ObjectHideFlags: 0
@@ -1064,9 +1101,9 @@ GameObject:
   - component: {fileID: 7171031911860492143}
   - component: {fileID: 7823672028068697180}
   - component: {fileID: 5696502100021999835}
-  - component: {fileID: 5306151879006208458}
   - component: {fileID: 36876234794876044}
   - component: {fileID: 6215381003327968133}
+  - component: {fileID: 3611899141254457057}
   m_Layer: 0
   m_Name: RightGrap
   m_TagString: Untagged
@@ -1143,28 +1180,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &5306151879006208458
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8868879480850805575}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6c4a83e80c599744a2a29a956f3796e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cameraLook: {fileID: 7486327104575030368}
-  ropeOut: {fileID: 2107935497729131858}
-  maxDistance: 100
-  grappleableLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  player: {fileID: 2516003810114803075}
-  isHooked: 0
-  audioSource: {fileID: 6215381003327968133}
-  shootSound: {fileID: 8300000, guid: dd0cab94723e7864dbee6489165fe4c1, type: 3}
 --- !u!120 &36876234794876044
 LineRenderer:
   serializedVersion: 2
@@ -1189,7 +1204,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ca1122763da38c94b8375635418df456, type: 2}
+  - {fileID: 2100000, guid: ff8b465e3df4f0b4ea52799d2edbec38, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1264,7 +1279,7 @@ LineRenderer:
     numCornerVertices: 0
     numCapVertices: 0
     alignment: 0
-    textureMode: 0
+    textureMode: 1
     textureScale: {x: 1, y: 1}
     shadowBias: 0.5
     generateLightingData: 0
@@ -1369,6 +1384,31 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!143 &3611899141254457057
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8868879480850805575}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8968023569656163203
 GameObject:
   m_ObjectHideFlags: 0
