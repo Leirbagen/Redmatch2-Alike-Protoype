@@ -8,6 +8,8 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float fallDistanceThreshold = 20f;
     [SerializeField] private float damagePerMeter = 2f;
     [SerializeField] private int maxFallDamage = 40;
+    private float pendingJumpForce = 0f;
+    public bool isPadJumping = false;
     private float highestYPosition;
     private bool wasGrounded;
     public AudioSource playerAudio;
@@ -15,10 +17,12 @@ public class PlayerController : NetworkBehaviour
     public AudioClip landSound;
     public GameObject cameraLook;
     public float NetworkYaw { get; set; }
+
     private void Awake()
     {
         characterController = GetComponent<NetworkCharacterController>();
     }
+
     public override void Spawned()
     {
         base.Spawned();
@@ -38,6 +42,7 @@ public class PlayerController : NetworkBehaviour
             if (audioListener != null) audioListener.enabled = false;
         }
     }
+
     public override void FixedUpdateNetwork()
     {
         base.FixedUpdateNetwork();
@@ -50,6 +55,17 @@ public class PlayerController : NetworkBehaviour
             Vector3 cameraRight = yawRotation * Vector3.right;
             Vector3 moveDirection = (cameraRight * data.move.x) + (cameraForward * data.move.y);
             moveDirection.Normalize();
+
+            if (pendingJumpForce > 0f)
+            {
+                if (characterController.Grounded)
+                {
+                    characterController.Jump();
+                }
+                characterController.Velocity = new Vector3(characterController.Velocity.x, pendingJumpForce, characterController.Velocity.z);
+                pendingJumpForce = 0f;
+            }
+
             DualGrapplingController grappler = GetComponent<DualGrapplingController>();
             bool isGrappling = grappler != null && (grappler.IsLeftHooked || grappler.IsRightHooked);
 
@@ -61,7 +77,6 @@ public class PlayerController : NetworkBehaviour
             {
                 characterController.Move(moveDirection * velocity * Runner.DeltaTime);
             }
-
             if (data.buttons.IsSet(InputButton.jump))
             {
                 if (characterController.Grounded)
@@ -79,6 +94,7 @@ public class PlayerController : NetworkBehaviour
         }
 
         transform.rotation = Quaternion.Euler(0f, NetworkYaw, 0f);
+
         if (!characterController.Grounded)
         {
             if (transform.position.y > highestYPosition)
@@ -98,8 +114,7 @@ public class PlayerController : NetworkBehaviour
                     }
                 }
                 float fallDistance = highestYPosition - transform.position.y;
-
-                if (fallDistance > fallDistanceThreshold)
+                if (fallDistance > fallDistanceThreshold && !isPadJumping)
                 {
                     int calculatedDamage = Mathf.RoundToInt((fallDistance - fallDistanceThreshold) * damagePerMeter);
                     int finalDamage = Mathf.Min(calculatedDamage, maxFallDamage);
@@ -109,9 +124,17 @@ public class PlayerController : NetworkBehaviour
                         damageable.TakeDamage(finalDamage);
                     }
                 }
+
+                isPadJumping = false;
             }
             highestYPosition = transform.position.y;
         }
         wasGrounded = characterController.Grounded;
+    }
+
+    public void ApplyJumpPad(float force)
+    {
+        pendingJumpForce = force;
+        isPadJumping = true;
     }
 }
