@@ -16,6 +16,9 @@ public class PlayerController : NetworkBehaviour
     public AudioClip landSound;
     public GameObject cameraLook;
     [Networked] public float NetworkYaw { get; set; }
+    private float pendingJumpForce = 0f;
+    public bool isPadJumping = false;
+
     private void Awake()
     {
         characterController = GetComponent<NetworkCharacterController>();
@@ -33,11 +36,11 @@ public class PlayerController : NetworkBehaviour
             if (camComponent != null)
             {
                 camComponent.enabled = true;
-            } 
+            }
             if (audioListener != null)
             {
                 audioListener.enabled = true;
-            } 
+            }
             cameraLook.tag = "MainCamera";
         }
         else
@@ -45,11 +48,11 @@ public class PlayerController : NetworkBehaviour
             if (camComponent != null)
             {
                 camComponent.enabled = false;
-            } 
+            }
             if (audioListener != null)
             {
                 audioListener.enabled = false;
-            } 
+            }
         }
         if (Object.HasStateAuthority)
         {
@@ -76,6 +79,15 @@ public class PlayerController : NetworkBehaviour
             moveDirection = (cameraRight * data.move.x) + (cameraForward * data.move.y);
             moveDirection.Normalize();
             jumpPressed = data.buttons.IsSet(InputButton.jump);
+        }
+        if (pendingJumpForce > 0f)
+        {
+            if (characterController.Grounded)
+            {
+                characterController.Jump();
+            }
+            characterController.Velocity = new Vector3(characterController.Velocity.x, pendingJumpForce, characterController.Velocity.z);
+            pendingJumpForce = 0f;
         }
         bool isGrappling = false;
         if (grappler != null)
@@ -110,9 +122,9 @@ public class PlayerController : NetworkBehaviour
                     playerAudio.PlayOneShot(jumpSound);
                 }
             }
-            
+
         }
-        
+
 
         transform.rotation = Quaternion.Euler(0f, NetworkYaw, 0f);
         if (!characterController.Grounded)
@@ -134,8 +146,7 @@ public class PlayerController : NetworkBehaviour
                     }
                 }
                 float fallDistance = highestYPosition - transform.position.y;
-
-                if (fallDistance > fallDistanceThreshold && Object.HasStateAuthority)
+                if (fallDistance > fallDistanceThreshold && !isPadJumping && Object.HasStateAuthority)
                 {
                     int calculatedDamage = Mathf.RoundToInt((fallDistance - fallDistanceThreshold) * damagePerMeter);
                     int finalDamage = Mathf.Min(calculatedDamage, maxFallDamage);
@@ -145,9 +156,19 @@ public class PlayerController : NetworkBehaviour
                         damageable.TakeDamage(finalDamage);
                     }
                 }
+
+                isPadJumping = false; 
+
             }
             highestYPosition = transform.position.y;
         }
         wasGrounded = characterController.Grounded;
     }
+
+    public void ApplyJumpPad(float force)
+    {
+        pendingJumpForce = force;
+        isPadJumping = true;
+    }
+
 }
