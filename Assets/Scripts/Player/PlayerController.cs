@@ -94,11 +94,11 @@ public class PlayerController : NetworkBehaviour
         {
             isGrappling = grappler.IsGrappling;
         }
-        bool isInAir = !characterController.Grounded;
+
         bool useAirbornePhysics = false;
         if (grappler != null)
         {
-            if (isInAir || isGrappling)
+            if (isGrappling)
             {
                 useAirbornePhysics = true;
             }
@@ -157,7 +157,7 @@ public class PlayerController : NetworkBehaviour
                     }
                 }
 
-                isPadJumping = false; 
+                isPadJumping = false;
 
             }
             highestYPosition = transform.position.y;
@@ -165,10 +165,14 @@ public class PlayerController : NetworkBehaviour
         wasGrounded = characterController.Grounded;
     }
 
-    public void ApplyJumpPad(float force)
+    public void ApplyJumpPad(float force, AudioSource padSource, AudioClip padClip)
     {
         pendingJumpForce = force;
         isPadJumping = true;
-    }
 
+        if (Runner.IsForward && padSource != null && padClip != null)
+        {
+            padSource.PlayOneShot(padClip);
+        }
+    }
 }
