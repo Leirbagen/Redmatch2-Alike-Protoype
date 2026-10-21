@@ -28,6 +28,7 @@ public class HitWeapon : WeaponBase
     public DamageNumber numberPrefab;
 
     public static event Action<bool> OnScopeUI;
+    public static event Action OnTargetHit;
 
     public override void InjectCamera(Camera cam)
     {
@@ -73,14 +74,14 @@ public class HitWeapon : WeaponBase
         if (cameraPlayerTransform == null)
         {
             return;
-        } 
+        }
         PlayerHealth owner = GetComponentInParent<PlayerHealth>();
         RaycastHit[] hits = Physics.RaycastAll(cameraPlayerTransform.position, cameraPlayerTransform.forward, fireRange, hitLayer | wallsHitLayer, QueryTriggerInteraction.Ignore);
-        Array.Sort(hits,CompareDistance);
-        foreach (RaycastHit hit in hits) 
+        Array.Sort(hits, CompareDistance);
+        foreach (RaycastHit hit in hits)
         {
-            PlayerHealth targetHealth = hit.collider.GetComponentInParent<PlayerHealth>(); 
-            if(targetHealth == owner)
+            PlayerHealth targetHealth = hit.collider.GetComponentInParent<PlayerHealth>();
+            if (targetHealth == owner)
             {
                 continue;
             }
@@ -90,9 +91,13 @@ public class HitWeapon : WeaponBase
                 {
                     targetHealth.RPC_TakeDamage(weaponDamage, weaponOwner);
                 }
-                if (isLocalPlayer && numberPrefab != null)
+                if (isLocalPlayer)
                 {
-                    numberPrefab.Spawn(hit.point, weaponDamage);
+                    if (numberPrefab != null)
+                    {
+                        numberPrefab.Spawn(hit.point, weaponDamage);
+                    }
+                    OnTargetHit?.Invoke();
                 }
             }
             break;
