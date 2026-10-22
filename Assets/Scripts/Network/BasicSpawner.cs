@@ -5,18 +5,24 @@ using Fusion.Sockets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public enum CustomGameType { PvP, KingOfTheHill }
+
 public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
     [SerializeField] private int sceneIndex = 2;
     [SerializeField] private NetworkPrefabRef _playerPrefab;
+    [SerializeField] private NetworkPrefabRef captureZonePrefab;
     [SerializeField] private float sensibility = 200f;
     public string CurrentRoomCode { get; private set; }
+
+    public CustomGameType CurrentGameType { get; private set; }
 
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
 
     public static BasicSpawner Instance { get; private set; }
     private NetworkRunner _runner;
     private Vector2 absoluteCameraLook;
+    private bool _jumpPressed;
 
     private void Update()
     {
@@ -28,19 +34,24 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
             absoluteCameraLook.x += lookX;
             absoluteCameraLook.y -= lookY;
             absoluteCameraLook.y = Mathf.Clamp(absoluteCameraLook.y, -80f, 80f);
+
+            if (InputController.Instance.GetButtonDown(InputController.Input.JUMP))
+            {
+                _jumpPressed = true;
+            }
         }
     }
+
     void INetworkRunnerCallbacks.OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
         if (runner.IsServer)
         {
-            // Create a unique position for the player
             Transform point = PlayerSpawnManager.Instance.GetRandomSpawnPoint();
             NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, point.position, point.rotation, player);
-            // Keep track of the player avatars for easy access
             _spawnedCharacters.Add(player, networkPlayerObject);
         }
     }
+
     void INetworkRunnerCallbacks.OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
         if (_spawnedCharacters.TryGetValue(player, out NetworkObject networkObject))
@@ -49,19 +60,20 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
             _spawnedCharacters.Remove(player);
         }
     }
+
     void INetworkRunnerCallbacks.OnInput(NetworkRunner runner, NetworkInput input)
     {
-        if (InputController.Instance == null)
-        {
-            Debug.LogWarning("InputController.Instance es null");
-            return;
-        }
+        if (InputController.Instance == null) return;
+
         var data = new NetworkInputData();
         float movX = InputController.Instance.GetAxis(InputController.Input.MOVEMENT_X);
         float movY = InputController.Instance.GetAxis(InputController.Input.MOVEMENT_Y);
         data.move = new Vector2(movX, movY);
         data.look = absoluteCameraLook;
-        data.buttons.Set(InputButton.jump, InputController.Instance.GetButton(InputController.Input.JUMP));
+
+        data.buttons.Set(InputButton.jump, _jumpPressed);
+        _jumpPressed = false;
+
         data.buttons.Set(InputButton.fire, InputController.Instance.GetButton(InputController.Input.FIRE_1));
         data.buttons.Set(InputButton.aim, InputController.Instance.GetButton(InputController.Input.AIM_WEAPON));
         data.buttons.Set(InputButton.reload, InputController.Instance.GetButton(InputController.Input.RELOAD_WEAPON));
@@ -70,17 +82,16 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         data.buttons.Set(InputButton.run, InputController.Instance.GetButton(InputController.Input.RUN));
         input.Set(data);
     }
+
     void INetworkRunnerCallbacks.OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
     void INetworkRunnerCallbacks.OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
-        if (runner != null && runner.gameObject != null)
-        {
-            Destroy(runner.gameObject);
-        }
+        if (runner != null && runner.gameObject != null) Destroy(runner.gameObject);
         _runner = null;
         _spawnedCharacters.Clear();
         InputController.Instance.ChangeGameMode(InputMode.Menu);
     }
+
     void INetworkRunnerCallbacks.OnConnectedToServer(NetworkRunner runner) { }
     void INetworkRunnerCallbacks.OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason) { }
     void INetworkRunnerCallbacks.OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }
@@ -89,7 +100,30 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     void INetworkRunnerCallbacks.OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) { }
     void INetworkRunnerCallbacks.OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data) { }
     void INetworkRunnerCallbacks.OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) { }
-    void INetworkRunnerCallbacks.OnSceneLoadDone(NetworkRunner runner) { }
+    void INetworkRunnerCallbacks.OnSceneLoadDone(NetworkRunner runner)
+    {
+        if (runner.IsServer)
+        {
+            if (CurrentGameType == CustomGameType.KingOfTheHill)
+            {
+                SecureSpawnPoint spawnPoint = FindObjectOfType<SecureSpawnPoint>();
+
+                if (spawnPoint != null)
+                {
+                    runner.Spawn(captureZonePrefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
+                    Debug.Log("King of the Hill spawned");
+                }
+                else
+                {
+                    Debug.LogWarning("spawn point not available");
+                }
+            }
+            else
+            {
+                Debug.Log("PVP MODE");
+            }
+        }
+    }
     void INetworkRunnerCallbacks.OnSceneLoadStart(NetworkRunner runner) { }
     void INetworkRunnerCallbacks.OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) { }
     void INetworkRunnerCallbacks.OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) { }
@@ -103,43 +137,47 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
 
-    async void StartGame(GameMode mode, string roomCode, int sceneToLoad)
+    async void StartGame(GameMode mode, string roomCode, int sceneToLoad, CustomGameType customType = CustomGameType.PvP)
     {
         if (_runner != null) return;
 
-        Debug.Log(roomCode);
         CurrentRoomCode = roomCode;
+        CurrentGameType = customType;
+
         GameObject runnerObj = new GameObject("NetworkRunner_Instance");
         DontDestroyOnLoad(runnerObj);
 
         _runner = runnerObj.AddComponent<NetworkRunner>();
         _runner.ProvideInput = true;
         _runner.AddCallbacks(this);
+
         var scene = SceneRef.FromIndex(sceneToLoad);
         var sceneInfo = new NetworkSceneInfo();
         if (scene.IsValid)
         {
             sceneInfo.AddSceneRef(scene, LoadSceneMode.Single);
         }
+
+        var sessionProps = new Dictionary<string, SessionProperty>();
+        sessionProps.Add("GameMode", (int)customType);
+
         var result = await _runner.StartGame(new StartGameArgs()
         {
             GameMode = mode,
             SessionName = roomCode,
             Scene = scene,
+            SessionProperties = sessionProps,
             SceneManager = runnerObj.AddComponent<NetworkSceneManagerDefault>()
         });
+
         if (!result.Ok)
         {
             Debug.LogWarning($"Couldnt connect to:  '{roomCode}'. Reason: {result.ShutdownReason}");
-            if (runnerObj != null)
-            {
-                Destroy(runnerObj);
-            }
+            if (runnerObj != null) Destroy(runnerObj);
             _runner = null;
         }
         InputController.Instance.ChangeGameMode(InputMode.Gameplay);
@@ -150,27 +188,19 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         string letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         string numbers = "1234567890";
         string code = "";
-        for(int i = 0; i < 2; i++)
-        {
-            code += letters[UnityEngine.Random.Range(0, letters.Length)];
-        }
-        for(int i = 0; i < 2; i++)
-        {
-            code += numbers[UnityEngine.Random.Range(0, numbers.Length)];
-        }
+        for (int i = 0; i < 2; i++) code += letters[UnityEngine.Random.Range(0, letters.Length)];
+        for (int i = 0; i < 2; i++) code += numbers[UnityEngine.Random.Range(0, numbers.Length)];
         return code;
     }
 
-    public void HostGame(int sceneToLoad)
+    public void HostGame(int sceneToLoad, CustomGameType mode)
     {
         string code = GenerateRoomCode();
-        StartGame(GameMode.Host, code, sceneToLoad);
+        StartGame(GameMode.Host, code, sceneToLoad, mode);
     }
 
     public void JoinGame(string code)
     {
         StartGame(GameMode.Client, code, sceneIndex);
     }
-
-    
 }

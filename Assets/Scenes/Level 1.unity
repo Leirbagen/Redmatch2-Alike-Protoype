@@ -3200,6 +3200,50 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &230194013
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 230194015}
+  - component: {fileID: 230194014}
+  m_Layer: 0
+  m_Name: CaptureZone
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &230194014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 230194013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81bbbf98781f41640ab79a033bc9de62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &230194015
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 230194013}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.12418045, y: 0.33465344, z: -0.04453362, w: 0.9330611}
+  m_LocalPosition: {x: 22.3, y: 0.211, z: 6.47}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &275767305
 GameObject:
   m_ObjectHideFlags: 0
@@ -4326,6 +4370,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 788510014}
+    - target: {fileID: 8582364364156788687, guid: acddb0fdaae02274287038bb72333a44, type: 3}
+      propertyPath: SortKey
+      value: 2769758539
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -17341,3 +17389,4 @@ SceneRoots:
   - {fileID: 89117788}
   - {fileID: 418934690}
   - {fileID: 358548257}
+  - {fileID: 230194015}

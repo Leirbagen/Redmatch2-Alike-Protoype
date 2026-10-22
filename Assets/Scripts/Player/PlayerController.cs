@@ -26,6 +26,7 @@ public class PlayerController : NetworkBehaviour
     public AudioClip landSound;
     public GameObject cameraLook;
     [Networked] public float NetworkYaw { get; set; }
+    [Networked] public float CaptureProgress { get; set; }
     private float pendingJumpForce = 0f;
     public bool isPadJumping = false;
     private void Awake()
@@ -77,6 +78,11 @@ public class PlayerController : NetworkBehaviour
                 staminaUI.Bind(this);
             }
         }
+    }
+    public void AddCaptureProgress(float amount)
+    {
+        CaptureProgress += amount;
+        if (CaptureProgress > 100f) CaptureProgress = 100f;
     }
     public override void FixedUpdateNetwork()
     {
