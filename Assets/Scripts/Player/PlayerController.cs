@@ -16,6 +16,7 @@ public class PlayerController : NetworkBehaviour
     public AudioClip landSound;
     public GameObject cameraLook;
     [Networked] public float NetworkYaw { get; set; }
+    [Networked] public float CaptureProgress { get; set; }
     private float pendingJumpForce = 0f;
     public bool isPadJumping = false;
 
@@ -59,6 +60,11 @@ public class PlayerController : NetworkBehaviour
             highestYPosition = transform.position.y;
             wasGrounded = true;
         }
+    }
+    public void AddCaptureProgress(float amount)
+    {
+        CaptureProgress += amount;
+        if (CaptureProgress > 100f) CaptureProgress = 100f;
     }
     public override void FixedUpdateNetwork()
     {
