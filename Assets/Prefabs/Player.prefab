@@ -110,6 +110,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   velocity: 7
+  runVelocity: 20
   fallDistanceThreshold: 20
   damagePerMeter: 2
   maxFallDamage: 40
@@ -118,6 +119,7 @@ MonoBehaviour:
   landSound: {fileID: 8300000, guid: b2de1a06aacea2d4e9f5e39349ed5901, type: 3}
   cameraLook: {fileID: 3744292052338408768}
   _NetworkYaw: 0
+  isPadJumping: 0
 --- !u!114 &8785869928844327663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -359,8 +361,8 @@ MonoBehaviour:
   _stateAuthorityChangeErrorCorrectionDelta: 0
   gravity: -20
   jumpImpulse: 10
-  acceleration: 13
-  braking: 10
+  acceleration: 20
+  braking: 40
   maxSpeed: 6
   rotationSpeed: 0
 --- !u!114 &8950084615000821766

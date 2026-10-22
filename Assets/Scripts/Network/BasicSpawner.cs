@@ -67,7 +67,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         data.buttons.Set(InputButton.reload, InputController.Instance.GetButton(InputController.Input.RELOAD_WEAPON));
         data.buttons.Set(InputButton.grappleLeft, InputController.Instance.GetButton(InputController.Input.GRAPPLE_LEFT));
         data.buttons.Set(InputButton.grappleRight, InputController.Instance.GetButton(InputController.Input.GRAPPLE_RIGHT));
-
+        data.buttons.Set(InputButton.run, InputController.Instance.GetButton(InputController.Input.RUN));
         input.Set(data);
     }
     void INetworkRunnerCallbacks.OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
