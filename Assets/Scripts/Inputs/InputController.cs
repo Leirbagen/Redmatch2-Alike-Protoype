@@ -89,6 +89,7 @@ public class InputController : MonoBehaviour
         public const int RELOAD_WEAPON = 11;
         public const int SCROLL_WHEEL = 12;
         public const int AIM_WEAPON = 13;
+        public const int RUN = 18;
         ///////MENU////////
         public const int MENUVERTICAL = 14;
         public const int MENUHORIZONTAL = 15;

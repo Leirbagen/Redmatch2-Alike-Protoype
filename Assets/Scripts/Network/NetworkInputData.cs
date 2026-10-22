@@ -15,5 +15,6 @@ public enum InputButton
     aim,
     reload,
     grappleLeft,
-    grappleRight
+    grappleRight,
+    run
 }
