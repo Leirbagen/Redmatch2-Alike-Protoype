@@ -106,6 +106,11 @@ public class HitWeapon : WeaponBase
 
     public override void PlayNetworkShootEffects()
     {
+        if(weaponAnimator != null)
+        {
+            weaponAnimator.SetTrigger("Shoot");
+        }
+        
         if (weaponAudio != null && shootSound != null)
         {
             weaponAudio.PlayOneShot(shootSound);

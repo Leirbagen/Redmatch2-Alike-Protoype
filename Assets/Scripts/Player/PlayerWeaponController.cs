@@ -14,6 +14,7 @@ public class PlayerWeaponController : NetworkBehaviour
     }
     public List<WeaponBase> startingWeapons = new List<WeaponBase>();
     public Transform weaponParentSocket;
+    private PlayerController playerController;
     public Transform defaultWeaponPosition;
     public Transform aimingPosition;
     public Camera playerCamera;
@@ -50,6 +51,7 @@ public class PlayerWeaponController : NetworkBehaviour
     public override void Spawned()
     {
         base.Spawned();
+        playerController = GetComponent<PlayerController>();
         if (HasInputAuthority)
         {
             OnWeaponsCleared?.Invoke();
@@ -95,6 +97,15 @@ public class PlayerWeaponController : NetworkBehaviour
         if (Time.timeScale == 0f) return;
         if (currentWeapon != null)
         {
+            bool sprinting = false;
+            if(playerController.IsSprinting)
+            {
+                if(IsAiming == false)
+                {
+                    sprinting = true;
+                }
+            }
+            currentWeapon.SetSprinting(sprinting);
             Transform targetPos = IsAiming ? aimingPosition : defaultWeaponPosition;
             weaponParentSocket.position = Vector3.Lerp(weaponParentSocket.position, targetPos.position, Time.deltaTime * aimSpeed);
             if (HasInputAuthority)

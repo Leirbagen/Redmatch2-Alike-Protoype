@@ -20,6 +20,7 @@ public class PlayerController : NetworkBehaviour
     [Networked] public float Stamina { get; set; }
     [Networked] public NetworkBool IsExhausted { get; set; }
     [Networked] private TickTimer regenTimer { get; set; }
+    [Networked] public NetworkBool IsSprinting { get; set; }
     public float StaminaNormalized => Stamina / maxStamina;
     public AudioSource playerAudio;
     public AudioClip jumpSound;
@@ -177,6 +178,10 @@ public class PlayerController : NetworkBehaviour
             
         }
         UpdateStamina(isRunning);
+        if (HasStateAuthority)
+        {
+            IsSprinting = isRunning;
+        }
 
         if (jumpPressed && characterController.Grounded)
         {
