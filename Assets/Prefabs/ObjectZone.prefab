@@ -143,7 +143,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneRadius: 5
-  pointsPerSecond: 60
+  pointsPerSecond: 1.66
   zoneRenderer: {fileID: 2433809750014953243}
   neutralColor: {r: 1, g: 1, b: 1, a: 1}
   capturingColor: {r: 0, g: 1, b: 0, a: 1}

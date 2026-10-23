@@ -3,14 +3,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement; 
+using UnityEngine.SceneManagement;
 
 public class LevelManager : NetworkBehaviour
 {
     public static LevelManager Instance { get; private set; }
 
     public float timeLimitSeconds = 120f;
-    public string mainMenuSceneName = "TitleScreen"; 
+    public string mainMenuSceneName = "TitleScreen";
 
     [Networked] public TickTimer MatchTimer { get; set; }
 
@@ -21,6 +21,7 @@ public class LevelManager : NetworkBehaviour
     public NetworkBool IsMatchOver { get; set; }
 
     [Networked] public PlayerRef WinnerPlayer { get; set; }
+
     [Networked] public int WinnerKillsAmount { get; set; }
 
     public static event Action<float> OnTimeUpdated;
@@ -69,22 +70,49 @@ public class LevelManager : NetworkBehaviour
         PlayerKills.Set(killer, currentKills + 1);
     }
 
+    public void DeclareKingHillWinner(PlayerRef winner, float finalProgress)
+    {
+        if (!HasStateAuthority || IsMatchOver) return;
+
+        WinnerPlayer = winner;
+        WinnerKillsAmount = Mathf.FloorToInt(finalProgress); 
+        IsMatchOver = true;
+    }
+
     private void CalculateWinner()
     {
         PlayerRef winner = PlayerRef.None;
-        int maxKills = 0;
+        int finalScore = 0;
 
-        foreach (var kvp in PlayerKills)
+        if (BasicSpawner.Instance.CurrentGameType == CustomGameType.KingOfTheHill)
         {
-            if (kvp.Value > maxKills)
+            float maxProgress = -1f;
+            PlayerController[] allPlayers = FindObjectsOfType<PlayerController>();
+
+            foreach (PlayerController player in allPlayers)
             {
-                maxKills = kvp.Value;
-                winner = kvp.Key;
+                if (player.CaptureProgress > maxProgress)
+                {
+                    maxProgress = player.CaptureProgress;
+                    winner = player.Object.InputAuthority;
+                }
+            }
+            finalScore = Mathf.FloorToInt(maxProgress);
+        }
+        else 
+        {
+            foreach (var kvp in PlayerKills)
+            {
+                if (kvp.Value > finalScore)
+                {
+                    finalScore = kvp.Value;
+                    winner = kvp.Key;
+                }
             }
         }
 
         WinnerPlayer = winner;
-        WinnerKillsAmount = maxKills;
+        WinnerKillsAmount = finalScore;
         IsMatchOver = true;
     }
 
@@ -108,6 +136,4 @@ public class LevelManager : NetworkBehaviour
         Cursor.visible = true;
         SceneManager.LoadScene(mainMenuSceneName);
     }
-
-    
 }
