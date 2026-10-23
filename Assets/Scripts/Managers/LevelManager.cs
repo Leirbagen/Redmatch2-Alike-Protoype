@@ -23,6 +23,7 @@ public class LevelManager : NetworkBehaviour
     [Networked] public PlayerRef WinnerPlayer { get; set; }
 
     [Networked] public int WinnerKillsAmount { get; set; }
+    [Networked] public NetworkBool IsKingHillMode { get; set; }
 
     public static event Action<float> OnTimeUpdated;
     public static event Action<string, int> OnMatchEnded;
@@ -31,6 +32,14 @@ public class LevelManager : NetworkBehaviour
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+    }
+
+    public override void Spawned()
+    {
+        if (HasStateAuthority && BasicSpawner.Instance != null)
+        {
+            IsKingHillMode = BasicSpawner.Instance.CurrentGameType == CustomGameType.KingOfTheHill;
+        }
     }
 
     public override void FixedUpdateNetwork()
@@ -75,7 +84,7 @@ public class LevelManager : NetworkBehaviour
         if (!HasStateAuthority || IsMatchOver) return;
 
         WinnerPlayer = winner;
-        WinnerKillsAmount = Mathf.FloorToInt(finalProgress); 
+        WinnerKillsAmount = Mathf.FloorToInt(finalProgress);
         IsMatchOver = true;
     }
 
@@ -84,7 +93,7 @@ public class LevelManager : NetworkBehaviour
         PlayerRef winner = PlayerRef.None;
         int finalScore = 0;
 
-        if (BasicSpawner.Instance.CurrentGameType == CustomGameType.KingOfTheHill)
+        if (IsKingHillMode)
         {
             float maxProgress = -1f;
             PlayerController[] allPlayers = FindObjectsOfType<PlayerController>();
@@ -99,7 +108,7 @@ public class LevelManager : NetworkBehaviour
             }
             finalScore = Mathf.FloorToInt(maxProgress);
         }
-        else 
+        else
         {
             foreach (var kvp in PlayerKills)
             {

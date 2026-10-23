@@ -37,13 +37,14 @@ public class TimerUI : MonoBehaviour
         if (winnerPanel != null && winnerText != null)
         {
             winnerPanel.SetActive(true);
-            if (BasicSpawner.Instance.CurrentGameType == CustomGameType.KingOfTheHill)
+
+            if (LevelManager.Instance != null && LevelManager.Instance.IsKingHillMode)
             {
-                winnerText.text = $"WINNER :\n{winnerName}!\n\n Percentage : {finalScore}%";
+                winnerText.text = $"WINNER :\n{winnerName}!\n\n Percentage: {finalScore}%";
             }
             else
             {
-                winnerText.text = $"WINNER :\n{winnerName}!\n\n Kills : {finalScore}";
+                winnerText.text = $"WINNER :\n{winnerName}!\n\n Kills: {finalScore}";
             }
         }
     }
