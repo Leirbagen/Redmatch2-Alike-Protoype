@@ -29,6 +29,7 @@ public class PlayerController : NetworkBehaviour
     [Networked] public float CaptureProgress { get; set; }
     private float pendingJumpForce = 0f;
     public bool isPadJumping = false;
+    public static event System.Action<float> OnCaptureProgressChanged;
     private void Awake()
     {
         characterController = GetComponent<NetworkCharacterController>();
@@ -81,8 +82,15 @@ public class PlayerController : NetworkBehaviour
     }
     public void AddCaptureProgress(float amount)
     {
+        if (!HasStateAuthority) return;
+
         CaptureProgress += amount;
-        if (CaptureProgress > 100f) CaptureProgress = 100f;
+
+        if (CaptureProgress >= 100f)
+        {
+            CaptureProgress = 100f;
+            LevelManager.Instance.DeclareKingHillWinner(Object.InputAuthority, CaptureProgress);
+        }
     }
     public override void FixedUpdateNetwork()
     {
@@ -107,7 +115,7 @@ public class PlayerController : NetworkBehaviour
             moveDirection.Normalize();
             jumpPressed = data.buttons.IsSet(InputButton.jump);
             runPressed = data.buttons.IsSet(InputButton.run);
-            //if (runPressed) Debug.Log("FUN: runPressed = true");
+
         }
         if (pendingJumpForce > 0f)
         {
@@ -255,5 +263,13 @@ public class PlayerController : NetworkBehaviour
             }
         }
     }
+    public override void Render()
+    {
+        if (HasInputAuthority)
+        {
+            OnCaptureProgressChanged?.Invoke(CaptureProgress);
+        }
+    }
+
 
 }

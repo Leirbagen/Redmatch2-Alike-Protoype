@@ -8,8 +8,8 @@ public class TimerUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI labelText;
 
     [Header("Pantalla de Victoria")]
-    public GameObject winnerPanel; 
-    public TextMeshProUGUI winnerText; 
+    public GameObject winnerPanel;
+    public TextMeshProUGUI winnerText;
 
     private void OnEnable()
     {
@@ -29,7 +29,7 @@ public class TimerUI : MonoBehaviour
         timeText.text = string.Format("{0:00}:{1:00}", timeSpan.Minutes, timeSpan.Seconds);
     }
 
-    private void ShowWinnerUI(string winnerName, int kills)
+    private void ShowWinnerUI(string winnerName, int finalScore)
     {
         timeText.gameObject.SetActive(false);
         labelText.gameObject.SetActive(false);
@@ -37,7 +37,14 @@ public class TimerUI : MonoBehaviour
         if (winnerPanel != null && winnerText != null)
         {
             winnerPanel.SetActive(true);
-            winnerText.text = $"¡GANADOR:\n{winnerName}!\n\nBajas: {kills}";
+            if (BasicSpawner.Instance.CurrentGameType == CustomGameType.KingOfTheHill)
+            {
+                winnerText.text = $"WINNER :\n{winnerName}!\n\n Percentage : {finalScore}%";
+            }
+            else
+            {
+                winnerText.text = $"WINNER :\n{winnerName}!\n\n Kills : {finalScore}";
+            }
         }
     }
 }
