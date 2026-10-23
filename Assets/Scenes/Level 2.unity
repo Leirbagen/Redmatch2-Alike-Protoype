@@ -704,6 +704,8 @@ GameObject:
   - component: {fileID: 898393372}
   - component: {fileID: 898393371}
   - component: {fileID: 898393373}
+  - component: {fileID: 898393374}
+  - component: {fileID: 898393375}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -766,6 +768,45 @@ MonoBehaviour:
     prefab: {fileID: 5288464404529657000, guid: 952039bddcdc7334fab29df0f1d73473, type: 3}
     defaultCapacity: 10
     maxSize: 30
+--- !u!114 &898393374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 898393370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcb1c456666199a469ed6ab1b2c29ac9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeLimitSeconds: 120
+  mainMenuSceneName: TitleScreen
+  _PlayerKills:
+    _items: []
+  _IsMatchOver:
+    RawValue: 0
+  _WinnerKillsAmount: 0
+--- !u!114 &898393375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 898393370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 2360348275
+  SendPriority: 1
+  EnableInterpolation: 1
+  Flags: 262146
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 898393374}
+  ForceRemoteRenderTimeframe: 0
 --- !u!1 &954019514
 GameObject:
   m_ObjectHideFlags: 0
