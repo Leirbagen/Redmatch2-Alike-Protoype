@@ -30,13 +30,12 @@ public class CaptureUI : MonoBehaviour
 
     private void UpdateProgress(float progress)
     {
-        // Ocultamos la barra si estamos jugando PvP normal
-        if (capturePanel != null && BasicSpawner.Instance != null)
+        if (capturePanel != null && LevelManager.Instance != null)
         {
-            bool isKoth = BasicSpawner.Instance.CurrentGameType == CustomGameType.KingOfTheHill;
-            if (capturePanel.activeSelf != isKoth)
+            bool isKingHill = LevelManager.Instance.IsKingHillMode;
+            if (capturePanel.activeSelf != isKingHill)
             {
-                capturePanel.SetActive(isKoth);
+                capturePanel.SetActive(isKingHill);
             }
         }
 
