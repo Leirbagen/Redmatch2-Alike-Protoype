@@ -11,8 +11,8 @@ public class LevelManager : NetworkBehaviour
 
     public float timeLimitSeconds = 120f;
     public string mainMenuSceneName = "TitleScreen";
-
-    [Networked] public TickTimer MatchTimer { get; set; }
+    [Networked]
+    public TickTimer MatchTimer { get; set; }
 
     [Networked, Capacity(8)]
     public NetworkDictionary<PlayerRef, int> PlayerKills => default;
@@ -20,18 +20,27 @@ public class LevelManager : NetworkBehaviour
     [Networked, OnChangedRender(nameof(OnMatchOverChanged))]
     public NetworkBool IsMatchOver { get; set; }
 
-    [Networked] public PlayerRef WinnerPlayer { get; set; }
+    [Networked]
+    public PlayerRef WinnerPlayer { get; set; }
 
-    [Networked] public int WinnerKillsAmount { get; set; }
-    [Networked] public NetworkBool IsKingHillMode { get; set; }
+    [Networked]
+    public int WinnerKillsAmount { get; set; }
+
+    [Networked]
+    public NetworkBool IsKingHillMode { get; set; }
 
     public static event Action<float> OnTimeUpdated;
     public static event Action<string, int> OnMatchEnded;
-
     private void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     public override void Spawned()
@@ -44,7 +53,10 @@ public class LevelManager : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
-        if (IsMatchOver) return;
+        if (IsMatchOver)
+        {
+            return;
+        }
 
         if (HasStateAuthority && !MatchTimer.IsRunning)
         {
@@ -59,7 +71,10 @@ public class LevelManager : NetworkBehaviour
 
     public override void Render()
     {
-        if (IsMatchOver) return;
+        if (IsMatchOver)
+        {
+            return;
+        }
 
         if (MatchTimer.IsRunning)
         {
@@ -73,7 +88,10 @@ public class LevelManager : NetworkBehaviour
 
     public void AddKill(PlayerRef killer)
     {
-        if (!HasStateAuthority || IsMatchOver || !killer.IsValid) return;
+        if (!HasStateAuthority || IsMatchOver || !killer.IsValid)
+        {
+            return;
+        }
 
         int currentKills = PlayerKills.ContainsKey(killer) ? PlayerKills.Get(killer) : 0;
         PlayerKills.Set(killer, currentKills + 1);
@@ -81,7 +99,10 @@ public class LevelManager : NetworkBehaviour
 
     public void DeclareKingHillWinner(PlayerRef winner, float finalProgress)
     {
-        if (!HasStateAuthority || IsMatchOver) return;
+        if (!HasStateAuthority || IsMatchOver)
+        {
+            return;
+        }
 
         WinnerPlayer = winner;
         WinnerKillsAmount = Mathf.FloorToInt(finalProgress);
@@ -92,12 +113,10 @@ public class LevelManager : NetworkBehaviour
     {
         PlayerRef winner = PlayerRef.None;
         int finalScore = 0;
-
         if (IsKingHillMode)
         {
             float maxProgress = -1f;
             PlayerController[] allPlayers = FindObjectsOfType<PlayerController>();
-
             foreach (PlayerController player in allPlayers)
             {
                 if (player.CaptureProgress > maxProgress)
@@ -106,6 +125,7 @@ public class LevelManager : NetworkBehaviour
                     winner = player.Object.InputAuthority;
                 }
             }
+
             finalScore = Mathf.FloorToInt(maxProgress);
         }
         else
@@ -129,18 +149,17 @@ public class LevelManager : NetworkBehaviour
     {
         string winnerName = WinnerPlayer.IsValid ? $"Player {WinnerPlayer.PlayerId}" : "No one";
         OnMatchEnded?.Invoke(winnerName, WinnerKillsAmount);
-
         StartCoroutine(ReturnToMenuRoutine());
     }
 
     private IEnumerator ReturnToMenuRoutine()
     {
         yield return new WaitForSeconds(15f);
-
         if (Runner != null)
         {
             Runner.Shutdown();
         }
+
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         SceneManager.LoadScene(mainMenuSceneName);

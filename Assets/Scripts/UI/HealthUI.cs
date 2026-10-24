@@ -5,14 +5,16 @@ using System.Collections;
 
 public class HealthUI : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI healthText;
-    [SerializeField] private Image damageOverlay;
-    [SerializeField] private float flashDuration = 1f;
-    [SerializeField] private float maxAlpha = 0.4f;
-
+    [SerializeField]
+    private TextMeshProUGUI healthText;
+    [SerializeField]
+    private Image damageOverlay;
+    [SerializeField]
+    private float flashDuration = 1f;
+    [SerializeField]
+    private float maxAlpha = 0.4f;
     private int lastHealth = -1;
     private Coroutine fadeCoroutine;
-
     private void OnEnable()
     {
         PlayerHealth.OnHealthChange += UpdateHealth;
@@ -38,6 +40,7 @@ public class HealthUI : MonoBehaviour
                 {
                     StopCoroutine(fadeCoroutine);
                 }
+
                 fadeCoroutine = StartCoroutine(FadeDamageOverlay());
             }
         }
@@ -47,11 +50,14 @@ public class HealthUI : MonoBehaviour
 
     private IEnumerator FadeDamageOverlay()
     {
-        if (damageOverlay == null) yield break;
+        if (damageOverlay == null)
+        {
+            yield break;
+        }
+
         Color c = damageOverlay.color;
         c.a = maxAlpha;
         damageOverlay.color = c;
-
         float timer = 0f;
         while (timer < flashDuration)
         {
@@ -60,6 +66,7 @@ public class HealthUI : MonoBehaviour
             damageOverlay.color = c;
             yield return null;
         }
+
         c.a = 0f;
         damageOverlay.color = c;
     }
