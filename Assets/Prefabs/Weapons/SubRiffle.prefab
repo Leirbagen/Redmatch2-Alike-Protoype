@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 3379106822903923705}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0.017, y: -0.078, z: -1.246}
+  m_LocalPosition: {x: -0.092, y: -0.061, z: -1.45}
   m_LocalScale: {x: 23.380043, y: 23.380043, z: 8.138449}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -99,7 +99,7 @@ PrefabInstance:
     - {fileID: -654330271714529266, guid: f934469c3bd50f04bbb95f73121b491d, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: f934469c3bd50f04bbb95f73121b491d, type: 3}
-      insertIndex: 1
+      insertIndex: -1
       addedObject: {fileID: 5583830688451359052}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f934469c3bd50f04bbb95f73121b491d, type: 3}
@@ -160,7 +160,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0844e374bd75f2c4199d99761d9be4ea, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.481
+      value: -0.055
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0844e374bd75f2c4199d99761d9be4ea, type: 3}
       propertyPath: m_LocalPosition.y
@@ -257,7 +257,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 320
   backForce: 4
-  weaponDamage: 25
+  weaponDamage: 20
   weaponNozzle: {fileID: 5583830688451359052}
   bulletHole: {fileID: 5288464404529657000, guid: 952039bddcdc7334fab29df0f1d73473, type: 3}
   flashEffect: {fileID: 9113582395060495145, guid: e265f8f763b9dd94d8d78df3e18fc24c, type: 3}

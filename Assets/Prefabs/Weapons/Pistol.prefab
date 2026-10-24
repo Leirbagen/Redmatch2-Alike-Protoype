@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 5388050589619406016}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -1, z: -0, w: 0}
-  m_LocalPosition: {x: 0.003853882, y: -0.037081055, z: -0.56581396}
+  m_LocalPosition: {x: -0.07, y: -0.037081055, z: -0.756}
   m_LocalScale: {x: 0.840523, y: 0.80607486, z: 0.8470269}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -263,7 +263,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 320
   backForce: 2
-  weaponDamage: 25
+  weaponDamage: 10
   weaponNozzle: {fileID: 5968365681570312229}
   bulletHole: {fileID: 5288464404529657000, guid: 952039bddcdc7334fab29df0f1d73473, type: 3}
   flashEffect: {fileID: 9113582395060495145, guid: e265f8f763b9dd94d8d78df3e18fc24c, type: 3}
