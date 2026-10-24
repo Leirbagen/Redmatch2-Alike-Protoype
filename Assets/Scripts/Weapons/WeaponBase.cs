@@ -18,6 +18,7 @@ public abstract class WeaponBase : MonoBehaviour
     protected bool isLocalPlayer = false;
     protected bool isServer = false;
     protected float nextFireTime = 0f;
+    [SerializeField] protected Animator weaponAnimator;
     protected PlayerRef weaponOwner;
 
     public void SetupNetworkRole(bool localPlayer, bool server, PlayerRef owner)
@@ -29,6 +30,10 @@ public abstract class WeaponBase : MonoBehaviour
     protected virtual void Awake()
     {
         currentAmmo = maxAmmo;
+        if(weaponAnimator == null)
+        {
+            weaponAnimator = GetComponent<Animator>();
+        }
     }
     protected virtual void OnEnable()
     {
@@ -69,6 +74,10 @@ public abstract class WeaponBase : MonoBehaviour
     {
         if (!isReloading && currentAmmo < maxAmmo && gameObject.activeInHierarchy)
         {
+            if(weaponAnimator != null)
+            {
+                weaponAnimator.SetTrigger("Reload");
+            }
             StartCoroutine(ReloadRoutine());
         }
     }
@@ -81,6 +90,14 @@ public abstract class WeaponBase : MonoBehaviour
         RefreshAmmoUI();
 
         isReloading = false;
+    }
+
+    public void SetSprinting(bool sprinting)
+    {
+        if (weaponAnimator != null)
+        {
+            weaponAnimator.SetBool("Sprint", sprinting);
+        }
     }
     protected abstract void ExecuteShoot();
     public abstract void PlayNetworkShootEffects();

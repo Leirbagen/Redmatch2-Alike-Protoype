@@ -114,11 +114,22 @@ MonoBehaviour:
   fallDistanceThreshold: 20
   damagePerMeter: 2
   maxFallDamage: 40
+  maxStamina: 100
+  staminaDrainPerSecond: 20
+  staminaRegenPerSecond: 15
+  regenDelay: 1.5
+  exhaustedRecover: 25
+  _Stamina: 0
+  _IsExhausted:
+    RawValue: 0
+  _IsSprinting:
+    RawValue: 0
   playerAudio: {fileID: 8331236191315641181}
   jumpSound: {fileID: 8300000, guid: 6ae21af32ef64904ab02de6755d695cf, type: 3}
   landSound: {fileID: 8300000, guid: b2de1a06aacea2d4e9f5e39349ed5901, type: 3}
   cameraLook: {fileID: 3744292052338408768}
   _NetworkYaw: 0
+  _CaptureProgress: 0
   isPadJumping: 0
 --- !u!114 &8785869928844327663
 MonoBehaviour:
@@ -389,7 +400,7 @@ MonoBehaviour:
   springForceMultiplier: 1
   swingControlForce: 20
   airControlForce: 15
-  grappleLaunchUpVelocity: 4
+  grappleLaunchUpVelocity: 6
   cameraLook: {fileID: 7486327104575030368}
   leftRopeOut: {fileID: 105785044051419094}
   leftLineRenderer: {fileID: 1169221830741927202}
