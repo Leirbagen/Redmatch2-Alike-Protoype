@@ -5137,7 +5137,7 @@ MonoBehaviour:
   _playerPrefab:
     RawGuidValue: 6c427748a53a89047a0e5239d06af9f7
   captureZonePrefab:
-    RawGuidValue: 4b2425471c5475148accf61ebdb9f460
+    RawGuidValue: 9476fe9e024a0644da8a923f1c872cd3
   sensibility: 200
 --- !u!4 &1418667545
 Transform:

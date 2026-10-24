@@ -3237,8 +3237,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 230194013}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.12418045, y: 0.33465344, z: -0.04453362, w: 0.9330611}
-  m_LocalPosition: {x: 22.3, y: 0.211, z: 6.47}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 22.3, y: 0.14, z: 6.47}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14889,6 +14889,8 @@ MonoBehaviour:
   _IsMatchOver:
     RawValue: 0
   _WinnerKillsAmount: 0
+  _IsKingHillMode:
+    RawValue: 0
 --- !u!4 &1830429879
 Transform:
   m_ObjectHideFlags: 0
