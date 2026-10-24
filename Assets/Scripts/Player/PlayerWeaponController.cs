@@ -12,6 +12,7 @@ public class PlayerWeaponController : NetworkBehaviour
         public string categoryName;
         public WeaponBase[] weapons;
     }
+
     public List<WeaponBase> startingWeapons = new List<WeaponBase>();
     public Transform weaponParentSocket;
     private PlayerController playerController;
@@ -23,18 +24,20 @@ public class PlayerWeaponController : NetworkBehaviour
     public WeaponLoad[] availableCategories;
     private WeaponBase currentWeapon;
     private bool isSwitchingAxis = false;
-
     public static event Action<int> OnWeaponSwitched;
     public static event Action OnWeaponsCleared;
     public static event Action<Sprite, int> OnWeaponIconReady;
-
     [Networked, OnChangedRender(nameof(OnCategoryChanged))]
     public int SyncedCategoryIndex { get; set; } = -1;
 
     [Networked, OnChangedRender(nameof(OnActiveWeaponChanged))]
     public int activeWeaponIndex { get; set; } = -1;
-    [Networked] public NetworkBool IsAiming { get; set; }
-    [Networked] private NetworkButtons PreviousButtons { get; set; }
+
+    [Networked]
+    public NetworkBool IsAiming { get; set; }
+
+    [Networked]
+    private NetworkButtons PreviousButtons { get; set; }
 
     private void OnEnable()
     {
@@ -44,10 +47,12 @@ public class PlayerWeaponController : NetworkBehaviour
             ForceUIUpdate();
         }
     }
+
     private void OnDisable()
     {
         WeaponUI.OnUIWakesUp -= ForceUIUpdate;
     }
+
     public override void Spawned()
     {
         base.Spawned();
@@ -58,10 +63,12 @@ public class PlayerWeaponController : NetworkBehaviour
             int mySelectedCategory = PlayerPrefs.GetInt("SelectedWeaponCategory", 0);
             RPC_SetWeaponCategory(mySelectedCategory);
         }
+
         if (SyncedCategoryIndex != -1)
         {
             BuildWeapons(SyncedCategoryIndex);
         }
+
         if (activeWeaponIndex != -1)
         {
             ApplyWeaponSwitchVisuals(activeWeaponIndex);
@@ -93,18 +100,27 @@ public class PlayerWeaponController : NetworkBehaviour
 
     private void Update()
     {
-        if (Object == null || !Object.IsValid) return;
-        if (Time.timeScale == 0f) return;
+        if (Object == null || !Object.IsValid)
+        {
+            return;
+        }
+
+        if (Time.timeScale == 0f)
+        {
+            return;
+        }
+
         if (currentWeapon != null)
         {
             bool sprinting = false;
-            if(playerController.IsSprinting)
+            if (playerController.IsSprinting)
             {
-                if(IsAiming == false)
+                if (IsAiming == false)
                 {
                     sprinting = true;
                 }
             }
+
             currentWeapon.SetSprinting(sprinting);
             Transform targetPos = IsAiming ? aimingPosition : defaultWeaponPosition;
             weaponParentSocket.position = Vector3.Lerp(weaponParentSocket.position, targetPos.position, Time.deltaTime * aimSpeed);
@@ -113,6 +129,7 @@ public class PlayerWeaponController : NetworkBehaviour
                 currentWeapon.SetAiming(IsAiming);
             }
         }
+
         if (HasInputAuthority && currentWeapon != null && InputController.Instance != null)
         {
             float scrollValue = InputController.Instance.GetAxis(InputController.Input.SCROLL_WHEEL);
@@ -150,6 +167,7 @@ public class PlayerWeaponController : NetworkBehaviour
             ApplyWeaponSwitchVisuals(newIndex);
         }
     }
+
     public override void FixedUpdateNetwork()
     {
         if (GetInput(out NetworkInputData data))
@@ -157,11 +175,9 @@ public class PlayerWeaponController : NetworkBehaviour
             bool fireJustPressed = data.buttons.WasPressed(PreviousButtons, InputButton.fire);
             bool reloadJustPressed = data.buttons.WasPressed(PreviousButtons, InputButton.reload);
             PreviousButtons = data.buttons;
-
             if (currentWeapon != null)
             {
                 IsAiming = data.buttons.IsSet(InputButton.aim);
-
                 if (Runner.IsForward)
                 {
                     bool shotFired = false;
@@ -179,6 +195,7 @@ public class PlayerWeaponController : NetworkBehaviour
                             shotFired = currentWeapon.TryShoot();
                         }
                     }
+
                     if (shotFired && HasStateAuthority)
                     {
                         RPC_PlayShootEffects();
@@ -204,26 +221,44 @@ public class PlayerWeaponController : NetworkBehaviour
 
     public void ForceUIUpdate()
     {
-        if (Object == null || !HasInputAuthority) return;
+        if (Object == null || !HasInputAuthority)
+        {
+            return;
+        }
+
         for (int i = 0; i < weaponSlots.Length; i++)
         {
             OnWeaponIconReady?.Invoke(weaponSlots[i] != null ? weaponSlots[i].weaponIcon : null, i);
         }
+
         OnWeaponSwitched?.Invoke(activeWeaponIndex);
-        if (currentWeapon != null) currentWeapon.RefreshAmmoUI();
+        if (currentWeapon != null)
+        {
+            currentWeapon.RefreshAmmoUI();
+        }
     }
 
     private void BuildWeapons(int categoryIndex)
     {
-        if (weaponSlots[0] != null) return;
-        if (categoryIndex < 0 || categoryIndex >= availableCategories.Length) return;
+        if (weaponSlots[0] != null)
+        {
+            return;
+        }
+
+        if (categoryIndex < 0 || categoryIndex >= availableCategories.Length)
+        {
+            return;
+        }
 
         foreach (WeaponBase startingWeapon in availableCategories[categoryIndex].weapons)
         {
             AddWeapon(startingWeapon);
         }
 
-        if (HasInputAuthority) ForceUIUpdate();
+        if (HasInputAuthority)
+        {
+            ForceUIUpdate();
+        }
     }
 
     private void AddWeapon(WeaponBase p_weaponPrefab)
@@ -247,6 +282,7 @@ public class PlayerWeaponController : NetworkBehaviour
                 {
                     OnWeaponIconReady?.Invoke(weaponClone.weaponIcon, i);
                 }
+
                 return;
             }
         }
@@ -263,7 +299,10 @@ public class PlayerWeaponController : NetworkBehaviour
 
     private void ApplyWeaponSwitchVisuals(int newIndex)
     {
-        if (weaponSlots[newIndex] == null) return;
+        if (weaponSlots[newIndex] == null)
+        {
+            return;
+        }
 
         foreach (WeaponBase weapon in weaponSlots)
         {
@@ -273,6 +312,7 @@ public class PlayerWeaponController : NetworkBehaviour
                 weapon.gameObject.SetActive(false);
             }
         }
+
         weaponSlots[newIndex].gameObject.SetActive(true);
         currentWeapon = weaponSlots[newIndex];
         if (HasInputAuthority)

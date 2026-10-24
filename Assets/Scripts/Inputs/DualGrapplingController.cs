@@ -24,19 +24,36 @@ public class DualGrapplingController : NetworkBehaviour
     public LineRenderer rightLineRenderer;
     public AudioSource rightAudio;
     public AudioClip shootSound;
-    [Networked] public NetworkBool IsLeftHooked { get; set; }
-    [Networked] public Vector3 LeftGrapplePoint { get; set; }
-    [Networked] private float LeftMaxLength { get; set; }
-    [Networked] private float LeftMinLength { get; set; }
-    [Networked] public NetworkBool IsRightHooked { get; set; }
-    [Networked] public Vector3 RightGrapplePoint { get; set; }
-    [Networked] private float RightMaxLength { get; set; }
-    [Networked] private float RightMinLength { get; set; }
-    [Networked] private NetworkButtons PreviousButtons { get; set; }
+    [Networked]
+    public NetworkBool IsLeftHooked { get; set; }
+
+    [Networked]
+    public Vector3 LeftGrapplePoint { get; set; }
+
+    [Networked]
+    private float LeftMaxLength { get; set; }
+
+    [Networked]
+    private float LeftMinLength { get; set; }
+
+    [Networked]
+    public NetworkBool IsRightHooked { get; set; }
+
+    [Networked]
+    public Vector3 RightGrapplePoint { get; set; }
+
+    [Networked]
+    private float RightMaxLength { get; set; }
+
+    [Networked]
+    private float RightMinLength { get; set; }
+
+    [Networked]
+    private NetworkButtons PreviousButtons { get; set; }
     public bool IsGrappling => IsLeftHooked || IsRightHooked;
+
     private NetworkCharacterController characterController;
     private CharacterController unityController;
-
     private void Awake()
     {
         characterController = GetComponent<NetworkCharacterController>();
@@ -44,12 +61,13 @@ public class DualGrapplingController : NetworkBehaviour
         if (leftLineRenderer != null)
         {
             leftLineRenderer.enabled = false;
-        } 
+        }
+
         if (rightLineRenderer != null)
         {
             rightLineRenderer.enabled = false;
         }
-    } 
+    }
 
     public override void FixedUpdateNetwork()
     {
@@ -57,15 +75,14 @@ public class DualGrapplingController : NetworkBehaviour
         {
             return;
         }
+
         bool leftPressed = data.buttons.WasPressed(PreviousButtons, InputButton.grappleLeft);
         bool leftReleased = data.buttons.WasReleased(PreviousButtons, InputButton.grappleLeft);
         bool rightPressed = data.buttons.WasPressed(PreviousButtons, InputButton.grappleRight);
         bool rightReleased = data.buttons.WasReleased(PreviousButtons, InputButton.grappleRight);
         PreviousButtons = data.buttons;
-
         HandleGrappleAction(leftPressed, leftReleased, true, data);
         HandleGrappleAction(rightPressed, rightReleased, false, data);
-        
     }
 
     private void HandleGrappleAction(bool pressed, bool released, bool isLeft, NetworkInputData data)
@@ -75,11 +92,12 @@ public class DualGrapplingController : NetworkBehaviour
             if (isLeft)
             {
                 IsLeftHooked = false;
-            } 
+            }
             else
             {
                 IsRightHooked = false;
-            } 
+            }
+
             return;
         }
 
@@ -88,7 +106,6 @@ public class DualGrapplingController : NetworkBehaviour
             Vector3 rayOrigin = transform.position + (Vector3.up * eyeHeight);
             Quaternion aimRotation = Quaternion.Euler(data.look.y, data.look.x, 0);
             Vector3 aimDirection = aimRotation * Vector3.forward;
-
             if (Physics.Raycast(rayOrigin, aimDirection, out RaycastHit hit, maxDistance, grappleableLayer))
             {
                 if (Runner.IsForward)
@@ -96,14 +113,14 @@ public class DualGrapplingController : NetworkBehaviour
                     if (isLeft && leftAudio != null)
                     {
                         leftAudio.PlayOneShot(shootSound);
-                    } 
+                    }
                     else if (!isLeft && rightAudio != null)
                     {
                         rightAudio.PlayOneShot(shootSound);
-                    } 
+                    }
                 }
-                float distance = Vector3.Distance(transform.position, hit.point);
 
+                float distance = Vector3.Distance(transform.position, hit.point);
                 if (isLeft)
                 {
                     IsLeftHooked = true;
@@ -134,13 +151,14 @@ public class DualGrapplingController : NetworkBehaviour
         if (characterController.Grounded && velocity.y < 0f)
         {
             velocity.y = 0f;
-        } 
-        velocity.y += characterController.gravity * dt;
+        }
 
+        velocity.y += characterController.gravity * dt;
         if (IsLeftHooked)
         {
             velocity += SpringAcceleration(LeftGrapplePoint, LeftMaxLength, LeftMinLength, velocity) * dt;
         }
+
         if (IsRightHooked)
         {
             velocity += SpringAcceleration(RightGrapplePoint, RightMaxLength, RightMinLength, velocity) * dt;
@@ -155,8 +173,8 @@ public class DualGrapplingController : NetworkBehaviour
         {
             control = airControlForce;
         }
-        velocity += moveDirection * control * dt;
 
+        velocity += moveDirection * control * dt;
         Vector3 before = transform.position;
         unityController.Move(velocity * dt);
         characterController.Grounded = unityController.isGrounded;
@@ -170,13 +188,13 @@ public class DualGrapplingController : NetworkBehaviour
         if (dist < 0.001f)
         {
             return Vector3.zero;
-        } 
-        Vector3 dir = toPoint / dist;
+        }
 
+        Vector3 dir = toPoint / dist;
         float stretch;
         if (dist > maxLen)
         {
-            stretch = dist - maxLen;  
+            stretch = dist - maxLen;
         }
         else if (dist < minLen)
         {
@@ -186,12 +204,12 @@ public class DualGrapplingController : NetworkBehaviour
         {
             return Vector3.zero;
         }
-        float radialVelocity = Vector3.Dot(velocity, dir);
 
+        float radialVelocity = Vector3.Dot(velocity, dir);
         return dir * (spring * springForceMultiplier * stretch - damper * radialVelocity);
     }
 
-/*
+    /*
     private void ApplyGrapplePhysics(Vector3 point, float ropeLength, ref Vector3 velocity)
     {
         Vector3 currentPos = transform.position;
@@ -218,7 +236,10 @@ public class DualGrapplingController : NetworkBehaviour
 
     private void DrawRope(LineRenderer line, Transform ropeOut, bool hooked, Vector3 point)
     {
-        if (line == null || ropeOut == null) return;
+        if (line == null || ropeOut == null)
+        {
+            return;
+        }
 
         line.enabled = hooked;
         if (hooked)

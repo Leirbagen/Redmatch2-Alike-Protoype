@@ -13,20 +13,22 @@ public class CaptureZone : NetworkBehaviour
 {
     public float zoneRadius = 5f;
     public float pointsPerSecond = 60f;
-
-    public MeshRenderer zoneRenderer; 
-    public Color neutralColor = new Color(1f, 1f, 1f, 0.2f);   
-    public Color capturingColor = new Color(0f, 1f, 0f, 0.4f); 
-    public Color contestedColor = new Color(1f, 0f, 0f, 0.4f); 
-    [Networked] public CaptureState CurrentState { get; set; }
+    public MeshRenderer zoneRenderer;
+    public Color neutralColor = new Color(1f, 1f, 1f, 0.2f);
+    public Color capturingColor = new Color(0f, 1f, 0f, 0.4f);
+    public Color contestedColor = new Color(1f, 0f, 0f, 0.4f);
+    [Networked]
+    public CaptureState CurrentState { get; set; }
 
     public override void FixedUpdateNetwork()
     {
-        if (!HasStateAuthority) return;
+        if (!HasStateAuthority)
+        {
+            return;
+        }
 
         Collider[] hits = Physics.OverlapSphere(transform.position, zoneRadius);
         List<PlayerController> playersInside = new List<PlayerController>();
-
         foreach (Collider hit in hits)
         {
             PlayerController player = hit.GetComponentInParent<PlayerController>();
@@ -39,26 +41,30 @@ public class CaptureZone : NetworkBehaviour
                 }
             }
         }
+
         if (playersInside.Count == 1)
         {
             playersInside[0].AddCaptureProgress(pointsPerSecond * Runner.DeltaTime);
-            CurrentState = CaptureState.Capturing; 
+            CurrentState = CaptureState.Capturing;
         }
         else if (playersInside.Count > 1)
         {
-            CurrentState = CaptureState.Contested; 
+            CurrentState = CaptureState.Contested;
         }
         else
         {
-            CurrentState = CaptureState.Neutral;   
+            CurrentState = CaptureState.Neutral;
         }
     }
+
     public override void Render()
     {
-        if (zoneRenderer == null) return;
+        if (zoneRenderer == null)
+        {
+            return;
+        }
 
         Color targetColor = neutralColor;
-
         switch (CurrentState)
         {
             case CaptureState.Capturing:
@@ -71,6 +77,7 @@ public class CaptureZone : NetworkBehaviour
                 targetColor = neutralColor;
                 break;
         }
+
         zoneRenderer.material.color = Color.Lerp(zoneRenderer.material.color, targetColor, Time.deltaTime * 5f);
     }
 

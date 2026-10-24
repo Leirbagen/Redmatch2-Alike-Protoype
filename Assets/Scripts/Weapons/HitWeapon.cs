@@ -15,8 +15,8 @@ public class HitWeapon : WeaponBase
     private Camera playerCam;
     private float defaultZoom;
     private bool isAiming = false;
-
-    [SerializeField] private int weaponDamage;
+    [SerializeField]
+    private int weaponDamage;
     public Transform weaponNozzle;
     public GameObject bulletHole;
     public GameObject flashEffect;
@@ -26,10 +26,8 @@ public class HitWeapon : WeaponBase
     public AudioClip shootSound;
     private Transform cameraPlayerTransform;
     public DamageNumber numberPrefab;
-
     public static event Action<bool> OnScopeUI;
     public static event Action OnTargetHit;
-
     public override void InjectCamera(Camera cam)
     {
         playerCam = cam;
@@ -39,6 +37,7 @@ public class HitWeapon : WeaponBase
             defaultZoom = playerCam.fieldOfView;
         }
     }
+
     private void Update()
     {
         transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.zero, Time.deltaTime * 5f);
@@ -52,15 +51,19 @@ public class HitWeapon : WeaponBase
 
     public override void SetAiming(bool aiming)
     {
-        if (isAiming == aiming) return;
-        isAiming = aiming;
+        if (isAiming == aiming)
+        {
+            return;
+        }
 
+        isAiming = aiming;
         if (isLocalPlayer && useScope)
         {
             if (weaponMesh != null)
             {
                 weaponMesh.SetActive(!aiming);
             }
+
             OnScopeUI?.Invoke(aiming);
         }
     }
@@ -69,12 +72,14 @@ public class HitWeapon : WeaponBase
     {
         return a.distance.CompareTo(b.distance);
     }
+
     protected override void ExecuteShoot()
     {
         if (cameraPlayerTransform == null)
         {
             return;
         }
+
         PlayerHealth owner = GetComponentInParent<PlayerHealth>();
         RaycastHit[] hits = Physics.RaycastAll(cameraPlayerTransform.position, cameraPlayerTransform.forward, fireRange, hitLayer | wallsHitLayer, QueryTriggerInteraction.Ignore);
         Array.Sort(hits, CompareDistance);
@@ -85,32 +90,36 @@ public class HitWeapon : WeaponBase
             {
                 continue;
             }
+
             if (targetHealth != null)
             {
                 if (isServer)
                 {
                     targetHealth.RPC_TakeDamage(weaponDamage, weaponOwner);
                 }
+
                 if (isLocalPlayer)
                 {
                     if (numberPrefab != null)
                     {
                         numberPrefab.Spawn(hit.point, weaponDamage);
                     }
+
                     OnTargetHit?.Invoke();
                 }
             }
+
             break;
         }
     }
 
     public override void PlayNetworkShootEffects()
     {
-        if(weaponAnimator != null)
+        if (weaponAnimator != null)
         {
             weaponAnimator.SetTrigger("Shoot");
         }
-        
+
         if (weaponAudio != null && shootSound != null)
         {
             weaponAudio.PlayOneShot(shootSound);
@@ -125,6 +134,7 @@ public class HitWeapon : WeaponBase
                 PoolManager.Instance.StartCoroutine(ReleaseAfterDelay(flashPoolID, flashClone, 0.1f));
             }
         }
+
         AddRecoil();
         if (cameraPlayerTransform != null && Physics.Raycast(cameraPlayerTransform.position, cameraPlayerTransform.forward, out RaycastHit hit, fireRange, hitLayer | wallsHitLayer))
         {
@@ -143,11 +153,13 @@ public class HitWeapon : WeaponBase
             }
         }
     }
+
     private void AddRecoil()
     {
         transform.Rotate(-backForce, 0, 0);
         transform.position -= transform.forward * (backForce / 50f);
     }
+
     private IEnumerator ReleaseAfterDelay(string poolID, GameObject obj, float delay)
     {
         yield return new WaitForSeconds(delay);
